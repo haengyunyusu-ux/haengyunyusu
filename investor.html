@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>투자자 안내 — 화광동진 IR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:       #07090f;
+      --navy-mid:   #0c1120;
+      --navy-card:  rgba(12,17,32,0.92);
+      --navy-deep:  rgba(6,8,14,0.96);
+      --paper:      #f0ece2;
+      --paper-dim:  rgba(240,236,226,0.62);
+      --paper-faint:rgba(240,236,226,0.28);
+      --gold:       #c9a84c;
+      --gold-lt:    #dfc06e;
+      --gold-faint: rgba(201,168,76,0.06);
+      --gold-b:     rgba(201,168,76,0.18);
+      --green:      #3ecf8e;
+      --green-dim:  rgba(62,207,142,0.15);
+      --serif:      'Noto Serif KR', serif;
+      --sans:       'Noto Sans KR', sans-serif;
+      --max:        1100px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--navy); color: var(--paper); font-family: var(--sans); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ── NAV ── */
+    nav { position: fixed; inset: 0 0 auto; z-index: 200; padding: 0 3rem; height: 64px; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(to bottom, rgba(7,9,15,.97), transparent); transition: background .3s, backdrop-filter .3s, border-bottom .3s; }
+    .nav-logo a { font-family: var(--serif); font-size: 1rem; font-weight: 600; color: var(--gold); letter-spacing: .08em; text-decoration: none; }
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-links a { font-size: .72rem; letter-spacing: .14em; color: var(--paper-faint); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.on { color: var(--gold); }
+    .nav-cta { font-size: .72rem; letter-spacing: .1em; padding: .5rem 1.2rem; border: 1px solid var(--gold-b); border-radius: 2px; color: var(--gold); text-decoration: none; transition: all .25s; white-space: nowrap; }
+    .nav-cta:hover { background: rgba(201,168,76,.08); }
+    @media (max-width: 860px) { .nav-links { display: none; } nav { padding: 0 1.5rem; } }
+
+    /* ── LAYOUT ── */
+    .wrap { position: relative; z-index: 1; max-width: var(--max); margin: 0 auto; padding: 7rem 2.5rem; }
+    .eyebrow { display: inline-flex; align-items: center; gap: .75rem; font-size: .66rem; letter-spacing: .38em; color: var(--gold); margin-bottom: 1.3rem; }
+    .eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: var(--gold); opacity: .55; }
+    .sec-title { font-family: var(--serif); font-size: clamp(1.7rem, 3.8vw, 2.85rem); font-weight: 600; line-height: 1.22; color: var(--paper); margin-bottom: 1rem; }
+    .sec-body { font-size: .93rem; line-height: 2.05; color: var(--paper-dim); }
+    .divider { position: relative; z-index: 1; width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 2.5rem; display: flex; align-items: center; gap: 1.2rem; }
+    .dl { flex: 1; height: 1px; background: linear-gradient(to right, transparent, var(--gold-b)); }
+    .dl + .dl { background: linear-gradient(to left, transparent, var(--gold-b)); }
+    .dg { color: var(--gold); font-size: .7rem; opacity: .45; flex-shrink: 0; }
+
+    /* ── BUTTONS ── */
+    .btn { display: inline-flex; align-items: center; gap: .5rem; padding: .78rem 1.9rem; border-radius: 2px; font-family: var(--sans); font-size: .78rem; font-weight: 500; letter-spacing: .1em; text-decoration: none; cursor: pointer; border: none; transition: all .28s ease; }
+    .btn-p { background: var(--gold); color: #07090f; }
+    .btn-p:hover { background: var(--gold-lt); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,.28); }
+    .btn-o { background: transparent; color: var(--paper-dim); border: 1px solid rgba(240,236,226,.2); }
+    .btn-o:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+    .btn-g { background: rgba(62,207,142,.1); color: var(--green); border: 1px solid rgba(62,207,142,.25); }
+    .btn-g:hover { background: rgba(62,207,142,.18); transform: translateY(-2px); }
+
+    /* ═══════════════════ HERO ═══════════════════ */
+    .hero { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 8rem 2rem 6rem; }
+    .hero-badge { display: inline-flex; align-items: center; gap: .65rem; border: 1px solid var(--gold-b); border-radius: 999px; padding: .38rem 1.4rem; font-size: .68rem; letter-spacing: .22em; color: var(--gold); margin-bottom: 2.2rem; opacity: 0; animation: fadeUp .9s ease forwards .15s; }
+    .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 2s ease infinite; }
+    .hero-eyebrow { font-size: .68rem; letter-spacing: .32em; color: var(--paper-faint); margin-bottom: 1.2rem; opacity: 0; animation: fadeUp .9s ease forwards .3s; }
+    .hero-title { font-family: var(--serif); font-size: clamp(1.7rem, 4vw, 3.2rem); font-weight: 600; line-height: 1.25; color: var(--paper); margin-bottom: 1.3rem; opacity: 0; animation: fadeUp .9s ease forwards .45s; }
+    .hero-pitch { font-family: var(--serif); font-size: clamp(1rem, 2.5vw, 1.5rem); font-weight: 300; color: var(--gold-lt); margin-bottom: 1.8rem; opacity: 0; animation: fadeUp .9s ease forwards .6s; }
+    .hero-desc { max-width: 600px; font-size: .92rem; line-height: 2.05; color: var(--paper-dim); margin-bottom: 3rem; opacity: 0; animation: fadeUp .9s ease forwards .75s; }
+    .hero-cta { display: flex; gap: .85rem; flex-wrap: wrap; justify-content: center; opacity: 0; animation: fadeUp .9s ease forwards .9s; }
+
+    /* Hero KPI strip */
+    .hero-kpi { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; border-top: 1px solid rgba(201,168,76,.1); background: rgba(7,9,15,.85); backdrop-filter: blur(12px); display: flex; justify-content: center; opacity: 0; animation: fadeIn 1s ease forwards 1.2s; }
+    .kpi-strip { display: flex; max-width: var(--max); width: 100%; }
+    .kpi-item { flex: 1; padding: 1.4rem 2rem; border-right: 1px solid rgba(201,168,76,.08); text-align: center; }
+    .kpi-item:last-child { border-right: none; }
+    .kpi-val { font-family: var(--serif); font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 700; color: var(--gold-lt); line-height: 1; margin-bottom: .3rem; }
+    .kpi-label { font-size: .62rem; letter-spacing: .18em; color: var(--paper-faint); line-height: 1.4; }
+    @media (max-width: 640px) { .kpi-strip { flex-wrap: wrap; } .kpi-item { flex: 1 1 50%; border-bottom: 1px solid rgba(201,168,76,.08); } }
+
+    /* ═══════════════════ EXEC SUMMARY ═══════════════════ */
+    .exec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    @media (max-width: 760px) { .exec-grid { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+    .exec-points { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 2rem; }
+    .exec-point { display: flex; align-items: flex-start; gap: 1.1rem; padding: 1.3rem 1.4rem; border: 1px solid var(--gold-b); border-radius: 4px; background: var(--gold-faint); transition: all .25s; }
+    .exec-point:hover { border-color: rgba(201,168,76,.38); background: rgba(201,168,76,.08); }
+    .ep-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: .1rem; }
+    .ep-title { font-size: .8rem; font-weight: 600; color: var(--paper); margin-bottom: .35rem; }
+    .ep-desc { font-size: .78rem; line-height: 1.72; color: var(--paper-dim); }
+
+    .exec-vision { border: 1px solid var(--gold-b); border-radius: 6px; padding: 2.5rem; background: var(--navy-card); }
+    .ev-label { font-size: .62rem; letter-spacing: .25em; color: var(--gold); margin-bottom: 1rem; }
+    .ev-statement { font-family: var(--serif); font-size: clamp(1rem, 2.4vw, 1.3rem); font-weight: 400; line-height: 1.8; color: var(--paper); margin-bottom: 2rem; }
+    .ev-statement em { font-style: normal; color: var(--gold-lt); }
+    .ev-divider { height: 1px; background: var(--gold-b); margin-bottom: 2rem; }
+    .ev-highlights { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .evh-item { }
+    .evh-num { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; color: var(--gold-lt); line-height: 1; }
+    .evh-label { font-size: .68rem; color: var(--paper-faint); margin-top: .2rem; line-height: 1.45; }
+
+    /* ═══════════════════ MARKET ═══════════════════ */
+    .market-band { position: relative; z-index: 1; background: linear-gradient(180deg, var(--navy) 0%, var(--navy-mid) 55%, var(--navy) 100%); border-top: 1px solid rgba(201,168,76,.06); border-bottom: 1px solid rgba(201,168,76,.06); }
+
+    .market-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-bottom: 4rem; }
+    @media (max-width: 760px) { .market-intro { grid-template-columns: 1fr; gap: 2rem; } }
+
+    /* TAM/SAM/SOM circles */
+    .tam-visual { display: flex; flex-direction: column; align-items: center; gap: .5rem; }
+    .tam-circles { position: relative; width: 100%; max-width: 320px; aspect-ratio: 1; margin: 0 auto; }
+    .tc-ring { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; border: 1px solid; }
+    .tc-ring--tam { inset: 0; background: rgba(201,168,76,.04); border-color: rgba(201,168,76,.2); }
+    .tc-ring--sam { inset: 15%; background: rgba(201,168,76,.07); border-color: rgba(201,168,76,.3); }
+    .tc-ring--som { inset: 32%; background: rgba(201,168,76,.12); border-color: rgba(201,168,76,.5); display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; }
+    .tc-label { font-size: .58rem; letter-spacing: .2em; color: var(--gold); position: absolute; }
+    .tc-label--tam { top: 6%; left: 50%; transform: translateX(-50%); }
+    .tc-label--sam { top: 22%; left: 50%; transform: translateX(-50%); }
+    .tc-val { font-family: var(--serif); font-size: clamp(1rem, 2.5vw, 1.4rem); font-weight: 700; color: var(--gold-lt); }
+    .tc-sub { font-size: .6rem; color: var(--paper-faint); margin-top: .2rem; }
+
+    .market-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+    @media (max-width: 760px) { .market-cards { grid-template-columns: 1fr; } }
+    .mcard { border: 1px solid var(--gold-b); border-radius: 5px; padding: 2rem 1.6rem; background: var(--navy-card); transition: all .3s ease; }
+    .mcard:hover { border-color: rgba(201,168,76,.4); transform: translateY(-4px); box-shadow: 0 16px 45px rgba(0,0,0,.4); }
+    .mc-icon { font-size: 1.8rem; margin-bottom: 1rem; display: block; }
+    .mc-figure { font-family: var(--serif); font-size: 1.9rem; font-weight: 700; color: var(--gold-lt); line-height: 1; margin-bottom: .3rem; }
+    .mc-trend { display: inline-flex; align-items: center; gap: .3rem; font-size: .65rem; color: var(--green); margin-bottom: .7rem; }
+    .mc-title { font-family: var(--serif); font-size: .98rem; font-weight: 600; color: var(--paper); margin-bottom: .6rem; }
+    .mc-desc { font-size: .8rem; line-height: 1.8; color: var(--paper-dim); }
+
+    /* ═══════════════════ BUSINESS MODEL ═══════════════════ */
+    .bm-streams { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 3rem; }
+    @media (max-width: 680px) { .bm-streams { grid-template-columns: 1fr; } }
+
+    .bm-card { border: 1px solid var(--gold-b); border-radius: 6px; overflow: hidden; background: var(--navy-card); transition: all .3s ease; }
+    .bm-card:hover { border-color: rgba(201,168,76,.4); transform: translateY(-4px); box-shadow: 0 18px 50px rgba(0,0,0,.4); }
+    .bm-head { padding: 1.8rem 2rem 1.3rem; border-bottom: 1px solid rgba(201,168,76,.07); display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+    .bm-head-left { }
+    .bm-num { font-size: .6rem; letter-spacing: .28em; color: var(--gold); margin-bottom: .5rem; }
+    .bm-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 600; color: var(--paper); }
+    .bm-share { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; color: var(--gold-lt); line-height: 1; flex-shrink: 0; }
+    .bm-body { padding: 1.3rem 2rem 1.8rem; }
+    .bm-desc { font-size: .82rem; line-height: 1.82; color: var(--paper-dim); margin-bottom: 1.2rem; }
+    .bm-bar-wrap { margin-bottom: 1rem; }
+    .bm-bar-label { display: flex; justify-content: space-between; font-size: .65rem; color: var(--paper-faint); margin-bottom: .35rem; }
+    .bm-bar { height: 4px; background: rgba(240,236,226,.08); border-radius: 2px; overflow: hidden; }
+    .bm-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-lt)); border-radius: 2px; transition: width 1.2s ease; }
+    .bm-items { list-style: none; display: flex; flex-direction: column; gap: .55rem; }
+    .bm-items li { display: flex; align-items: center; gap: .7rem; font-size: .78rem; color: var(--paper-dim); }
+    .bm-items li::before { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--gold); opacity: .6; flex-shrink: 0; }
+
+    /* Revenue projection bar chart */
+    .rev-chart { margin-top: 3.5rem; border: 1px solid var(--gold-b); border-radius: 6px; padding: 2.5rem; background: var(--navy-card); }
+    .rc-title { font-size: .68rem; letter-spacing: .2em; color: var(--gold); margin-bottom: 2rem; }
+    .rc-bars { display: flex; align-items: flex-end; gap: 1.5rem; height: 160px; }
+    @media (max-width: 500px) { .rc-bars { gap: .8rem; } }
+    .rc-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: .6rem; }
+    .rcb-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; flex: 1; }
+    .rcb { width: 100%; max-width: 60px; border-radius: 3px 3px 0 0; background: linear-gradient(to top, var(--gold), rgba(201,168,76,.4)); transition: height 1.4s ease; }
+    .rcb-val { font-family: var(--serif); font-size: .8rem; font-weight: 600; color: var(--gold-lt); margin-bottom: .3rem; }
+    .rcb-year { font-size: .62rem; letter-spacing: .12em; color: var(--paper-faint); }
+    .rc-axis { height: 1px; background: var(--gold-b); margin-top: 1rem; }
+
+    /* ═══════════════════ ROADMAP ═══════════════════ */
+    .roadmap-track { position: relative; margin-top: 4rem; padding-left: 2.5rem; }
+    .roadmap-track::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 0; width: 1px; background: linear-gradient(to bottom, var(--gold), rgba(201,168,76,.1)); }
+    @media (max-width: 600px) { .roadmap-track { padding-left: 1.5rem; } }
+
+    .rm-phase { margin-bottom: 3.5rem; position: relative; }
+    .rm-phase::before { content: ''; position: absolute; left: -2.5rem; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--navy); border: 1.5px solid var(--gold); transform: translateX(.5px); transition: background .3s; }
+    .rm-phase:hover::before { background: var(--gold); box-shadow: 0 0 12px rgba(201,168,76,.4); }
+    @media (max-width: 600px) { .rm-phase::before { left: -1.5rem; } }
+
+    .rm-phase--active::before { background: var(--gold); box-shadow: 0 0 16px rgba(201,168,76,.45); border-color: var(--gold-lt); }
+    .rm-phase--active .rm-year { color: var(--gold); }
+
+    .rm-year { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--gold-lt); margin-bottom: .3rem; line-height: 1; }
+    .rm-phase-name { font-size: .68rem; letter-spacing: .2em; color: var(--gold); margin-bottom: 1rem; }
+    .rm-milestones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    @media (max-width: 760px) { .rm-milestones { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 500px) { .rm-milestones { grid-template-columns: 1fr; } }
+
+    .rm-milestone { border: 1px solid var(--gold-b); border-radius: 4px; padding: 1.2rem 1.3rem; background: var(--gold-faint); }
+    .rm-milestone--done { border-color: rgba(62,207,142,.2); background: rgba(62,207,142,.04); }
+    .rm-milestone--now  { border-color: rgba(201,168,76,.35); background: rgba(201,168,76,.07); }
+    .rms-status { font-size: .58rem; letter-spacing: .2em; color: var(--paper-faint); margin-bottom: .5rem; display: flex; align-items: center; gap: .4rem; }
+    .rms-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--paper-faint); flex-shrink: 0; }
+    .rm-milestone--done .rms-dot { background: var(--green); }
+    .rm-milestone--now  .rms-dot { background: var(--gold); animation: blink 2s ease infinite; }
+    .rm-milestone--done .rms-status { color: var(--green); }
+    .rm-milestone--now  .rms-status { color: var(--gold); }
+    .rms-title { font-size: .84rem; font-weight: 500; color: var(--paper); line-height: 1.4; }
+
+    /* ═══════════════════ INVESTMENT PROPOSAL ═══════════════════ */
+    .inv-hero-band { position: relative; z-index: 1; background: linear-gradient(180deg, var(--navy) 0%, var(--navy-mid) 55%, var(--navy) 100%); border-top: 1px solid rgba(201,168,76,.06); border-bottom: 1px solid rgba(201,168,76,.06); }
+
+    .inv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    @media (max-width: 760px) { .inv-grid { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+    .inv-ask { border: 1px solid rgba(201,168,76,.3); border-radius: 6px; padding: 2.5rem; background: rgba(201,168,76,.05); }
+    .ia-label { font-size: .62rem; letter-spacing: .25em; color: var(--gold); margin-bottom: .8rem; }
+    .ia-amount { font-family: var(--serif); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; color: var(--paper); line-height: 1; margin-bottom: .4rem; }
+    .ia-sub { font-size: .8rem; color: var(--paper-faint); margin-bottom: 1.8rem; }
+    .ia-divider { height: 1px; background: var(--gold-b); margin-bottom: 1.8rem; }
+    .ia-items { display: flex; flex-direction: column; gap: 1rem; }
+    .ia-item { display: flex; align-items: flex-start; gap: .9rem; }
+    .ia-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: .05rem; }
+    .ia-item-title { font-size: .8rem; font-weight: 500; color: var(--paper); margin-bottom: .2rem; }
+    .ia-item-desc { font-size: .75rem; color: var(--paper-dim); line-height: 1.65; }
+
+    /* Use of funds donut-style bars */
+    .funds-breakdown { margin-top: 2.5rem; }
+    .fb-title { font-size: .65rem; letter-spacing: .2em; color: var(--gold); margin-bottom: 1.2rem; }
+    .fb-list { display: flex; flex-direction: column; gap: .9rem; }
+    .fb-row { }
+    .fb-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: .35rem; }
+    .fb-name { font-size: .78rem; color: var(--paper-dim); }
+    .fb-pct  { font-size: .72rem; font-weight: 600; color: var(--gold-lt); }
+    .fb-bar  { height: 5px; background: rgba(240,236,226,.07); border-radius: 3px; overflow: hidden; }
+    .fb-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-lt)); transition: width 1.4s ease; }
+
+    /* Tier cards */
+    .tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-top: 3rem; }
+    @media (max-width: 760px) { .tier-grid { grid-template-columns: 1fr; max-width: 400px; } }
+    .tier-card { border: 1px solid var(--gold-b); border-radius: 6px; overflow: hidden; background: var(--navy-card); transition: all .3s ease; }
+    .tier-card:hover { border-color: rgba(201,168,76,.4); transform: translateY(-4px); }
+    .tier-card--featured { border-color: rgba(201,168,76,.4); background: rgba(201,168,76,.06); }
+    .tier-head { padding: 1.6rem 1.8rem 1.2rem; border-bottom: 1px solid rgba(201,168,76,.07); }
+    .tier-level { font-size: .6rem; letter-spacing: .28em; color: var(--gold); margin-bottom: .5rem; }
+    .tier-name { font-family: var(--serif); font-size: 1.15rem; font-weight: 600; color: var(--paper); margin-bottom: .3rem; }
+    .tier-range { font-size: .78rem; color: var(--paper-faint); }
+    .tier-body { padding: 1.3rem 1.8rem 1.8rem; }
+    .tier-perks { list-style: none; display: flex; flex-direction: column; gap: .65rem; }
+    .tier-perks li { display: flex; align-items: flex-start; gap: .7rem; font-size: .78rem; color: var(--paper-dim); line-height: 1.6; }
+    .tier-perks li .tp-check { flex-shrink: 0; width: 14px; height: 14px; border-radius: 50%; background: rgba(201,168,76,.15); border: 1px solid var(--gold-b); display: inline-flex; align-items: center; justify-content: center; margin-top: .1rem; }
+    .tier-card--featured .tp-check { background: rgba(201,168,76,.25); }
+    .tp-tick { font-size: .55rem; color: var(--gold); }
+
+    /* ═══════════════════ TEAM ═══════════════════ */
+    .team-founder-card { display: grid; grid-template-columns: 280px 1fr; gap: 0; border: 1px solid var(--gold-b); border-radius: 8px; overflow: hidden; background: var(--navy-card); margin-top: 3.5rem; }
+    @media (max-width: 760px) { .team-founder-card { grid-template-columns: 1fr; } }
+
+    .team-photo-panel { background: linear-gradient(160deg, rgba(201,168,76,.07) 0%, rgba(7,9,15,1) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 2rem; border-right: 1px solid var(--gold-b); gap: 1.4rem; position: relative; overflow: hidden; }
+    .team-photo-panel::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 30%, rgba(201,168,76,.08), transparent 70%); pointer-events: none; }
+    @media (max-width: 760px) { .team-photo-panel { border-right: none; border-bottom: 1px solid var(--gold-b); padding: 2.5rem 2rem; } }
+
+    .team-avatar { position: relative; width: 140px; height: 140px; flex-shrink: 0; }
+    .team-avatar-ring { position: absolute; inset: -4px; border-radius: 50%; background: conic-gradient(var(--gold) 0deg, var(--gold-lt) 90deg, transparent 180deg, var(--gold-b) 270deg, var(--gold) 360deg); animation: spin 8s linear infinite; }
+    .team-avatar-ring-inner { position: absolute; inset: 2px; border-radius: 50%; background: var(--navy); }
+    .team-avatar-img { position: absolute; inset: 6px; border-radius: 50%; background: linear-gradient(145deg, rgba(201,168,76,.12), rgba(201,168,76,.04)); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .team-avatar-mono { font-family: var(--serif); font-size: 2.8rem; font-weight: 700; color: var(--gold); line-height: 1; letter-spacing: -.02em; }
+    .team-avatar-placeholder-label { font-size: .58rem; letter-spacing: .2em; color: var(--paper-faint); margin-top: -.3rem; }
+
+    .team-role-badge { display: inline-flex; align-items: center; gap: .5rem; border: 1px solid var(--gold-b); border-radius: 999px; padding: .32rem 1rem; font-size: .62rem; letter-spacing: .18em; color: var(--gold); background: rgba(201,168,76,.06); }
+    .team-role-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); animation: blink 2.5s ease infinite; }
+
+    .team-cred-list { display: flex; flex-direction: column; gap: .5rem; width: 100%; }
+    .team-cred-item { display: flex; align-items: center; gap: .6rem; font-size: .68rem; color: var(--paper-faint); }
+    .team-cred-item::before { content: ''; display: block; width: 16px; height: 1px; background: var(--gold); opacity: .4; flex-shrink: 0; }
+
+    .team-info-panel { padding: 3rem 3rem 2.8rem; display: flex; flex-direction: column; gap: 2.2rem; }
+    @media (max-width: 860px) { .team-info-panel { padding: 2.2rem 2rem; } }
+
+    .team-name-block { border-bottom: 1px solid var(--gold-b); padding-bottom: 1.8rem; }
+    .team-name-ko { font-family: var(--serif); font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 700; color: var(--paper); letter-spacing: -.01em; line-height: 1.1; }
+    .team-name-desc { font-size: .8rem; letter-spacing: .14em; color: var(--gold-lt); margin-top: .5rem; font-weight: 300; }
+    .team-name-sub { font-size: .75rem; color: var(--paper-faint); margin-top: .35rem; line-height: 1.6; }
+
+    .team-section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    @media (max-width: 500px) { .team-section-grid { grid-template-columns: 1fr; gap: 1.5rem; } }
+
+    .team-block-label { font-size: .6rem; letter-spacing: .28em; color: var(--gold); margin-bottom: .65rem; display: flex; align-items: center; gap: .6rem; }
+    .team-block-label::after { content: ''; flex: 1; height: 1px; background: var(--gold-b); }
+    .team-block-text { font-size: .84rem; line-height: 1.9; color: var(--paper-dim); }
+
+    .team-quote { border-left: 2px solid var(--gold); padding: 1rem 1.5rem; background: rgba(201,168,76,.04); border-radius: 0 4px 4px 0; }
+    .team-quote-text { font-family: var(--serif); font-size: .95rem; font-weight: 300; color: var(--paper-dim); line-height: 1.85; font-style: italic; }
+    .team-quote-attr { font-size: .65rem; letter-spacing: .14em; color: var(--gold); margin-top: .65rem; }
+
+    .team-badge-strip { display: flex; flex-wrap: wrap; gap: .55rem; padding-top: 1.8rem; border-top: 1px solid rgba(240,236,226,.06); }
+    .team-badge { font-size: .64rem; letter-spacing: .1em; padding: .35rem .9rem; border: 1px solid rgba(201,168,76,.2); border-radius: 2px; color: var(--paper-faint); background: rgba(201,168,76,.04); }
+    .team-badge.hi { border-color: rgba(201,168,76,.4); color: var(--gold); background: rgba(201,168,76,.08); }
+
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* ═══════════════════ CONTACT ═══════════════════ */
+    .contact-grid { display: grid; grid-template-columns: 5fr 6fr; gap: 4rem; align-items: start; margin-top: 3rem; }
+    @media (max-width: 760px) { .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+    .contact-left { display: flex; flex-direction: column; gap: 1.5rem; }
+    .cinfo-card { border: 1px solid var(--gold-b); border-radius: 4px; padding: 1.4rem 1.6rem; background: var(--gold-faint); }
+    .ci-label { font-size: .6rem; letter-spacing: .22em; color: var(--gold); margin-bottom: .4rem; }
+    .ci-val { font-size: .88rem; color: var(--paper); line-height: 1.55; }
+
+    .dl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; margin-top: 1.5rem; }
+    .dl-btn { display: flex; align-items: center; gap: .7rem; padding: 1rem 1.3rem; border: 1px solid var(--gold-b); border-radius: 4px; background: var(--gold-faint); font-size: .75rem; color: var(--paper-dim); text-decoration: none; transition: all .25s; cursor: pointer; }
+    .dl-btn:hover { border-color: rgba(201,168,76,.45); color: var(--gold); background: rgba(201,168,76,.08); transform: translateY(-2px); }
+    .dl-btn-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .dl-btn-text { }
+    .dl-btn-name { font-size: .78rem; font-weight: 500; color: var(--paper); margin-bottom: .1rem; }
+    .dl-btn-sub  { font-size: .65rem; color: var(--paper-faint); }
+
+    /* IR PDF Download Card */
+    .ir-dl-card { border: 1px solid var(--gold-b); border-radius: 6px; padding: 1.6rem 1.8rem; background: linear-gradient(135deg, rgba(201,168,76,.08), rgba(201,168,76,.03)); position: relative; overflow: hidden; }
+    .ir-dl-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 60%, rgba(201,168,76,.05)); pointer-events: none; }
+    .ir-dl-label { font-size: .6rem; letter-spacing: .22em; color: var(--gold); margin-bottom: .6rem; }
+    .ir-dl-title { font-family: var(--serif); font-size: 1rem; font-weight: 600; color: var(--paper); margin-bottom: .4rem; }
+    .ir-dl-desc { font-size: .78rem; line-height: 1.75; color: var(--paper-dim); margin-bottom: 1.3rem; }
+    .ir-dl-meta { display: flex; gap: 1.2rem; margin-bottom: 1.4rem; }
+    .ir-dl-meta-item { font-size: .65rem; color: var(--paper-faint); display: flex; align-items: center; gap: .3rem; }
+    .ir-dl-meta-item::before { content: ''; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: var(--gold); opacity: .6; }
+    .btn-ir-dl { display: inline-flex; align-items: center; gap: .65rem; padding: .82rem 1.8rem; border-radius: 2px; font-family: var(--sans); font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-decoration: none; cursor: pointer; border: none; background: var(--gold); color: #07090f; transition: all .28s ease; width: 100%; justify-content: center; }
+    .btn-ir-dl:hover { background: var(--gold-lt); transform: translateY(-2px); box-shadow: 0 10px 32px rgba(201,168,76,.32); }
+    .btn-ir-dl svg { flex-shrink: 0; }
+
+    .form-card { border: 1px solid var(--gold-b); border-radius: 6px; padding: 2.5rem 2.2rem; background: var(--navy-card); }
+    .form-title { font-family: var(--serif); font-size: 1.15rem; font-weight: 600; color: var(--paper); margin-bottom: 1.8rem; }
+    .form-row { margin-bottom: 1.25rem; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+    @media (max-width: 500px) { .form-row-2 { grid-template-columns: 1fr; } }
+    .form-label { display: block; font-size: .66rem; letter-spacing: .18em; color: var(--gold); margin-bottom: .5rem; }
+    .form-input { width: 100%; background: rgba(240,236,226,.04); border: 1px solid rgba(240,236,226,.1); border-radius: 2px; padding: .75rem 1rem; font-family: var(--sans); font-size: .85rem; color: var(--paper); outline: none; transition: border-color .2s; }
+    .form-input:focus { border-color: rgba(201,168,76,.45); }
+    .form-input::placeholder { color: rgba(240,236,226,.2); }
+    textarea.form-input { resize: vertical; min-height: 90px; }
+    select.form-input option { background: #0c1120; }
+    .form-submit { width: 100%; justify-content: center; margin-top: .5rem; }
+    .form-note { text-align: center; font-size: .68rem; color: var(--paper-faint); margin-top: .9rem; }
+
+    /* ═══════════════════ FINAL CTA ═══════════════════ */
+    .final { position: relative; z-index: 1; text-align: center; padding: 8rem 2.5rem 7rem; }
+    .final-accent { display: flex; align-items: center; justify-content: center; gap: 1.2rem; margin-bottom: 2.8rem; }
+    .fa-line { width: 60px; height: 1px; background: linear-gradient(to right, transparent, var(--gold)); opacity: .35; }
+    .fa-line + .fa-line { background: linear-gradient(to left, transparent, var(--gold)); }
+    .fa-gem { color: var(--gold); font-size: .85rem; opacity: .45; }
+    .final-text { font-family: var(--serif); font-size: clamp(1.3rem, 3.2vw, 2.1rem); font-weight: 400; line-height: 1.75; color: var(--paper); max-width: 660px; margin: 0 auto 1.2rem; }
+    .final-text em { font-style: normal; color: var(--gold-lt); }
+    .final-sub { font-size: .82rem; color: var(--paper-faint); letter-spacing: .08em; margin-bottom: 3rem; }
+    .final-btns { display: flex; gap: .85rem; justify-content: center; flex-wrap: wrap; }
+
+    /* ── FOOTER ── */
+    footer { position: relative; z-index: 1; border-top: 1px solid rgba(240,236,226,.05); padding: 2rem 3rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .foot-brand { font-family: var(--serif); font-size: .95rem; color: var(--gold); letter-spacing: .07em; }
+    .foot-copy { font-size: .65rem; color: rgba(240,236,226,.16); letter-spacing: .1em; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp  { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:translateY(0) } }
+    @keyframes fadeIn  { from { opacity:0 } to { opacity:1 } }
+    @keyframes blink   { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.5)} }
+    .rv  { opacity:0; transform:translateY(26px);  transition:opacity .8s ease, transform .8s ease; }
+    .rvl { opacity:0; transform:translateX(-24px); transition:opacity .8s ease, transform .8s ease; }
+    .rvr { opacity:0; transform:translateX(24px);  transition:opacity .8s ease, transform .8s ease; }
+    .rv.on, .rvl.on, .rvr.on { opacity:1; transform:none; }
+  </style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<!-- ▸ NAV -->
+<nav id="main-nav">
+  <div class="nav-logo"><a href="index.html">화광동진 和光同塵</a></div>
+  <ul class="nav-links">
+    <li><a href="story.html">스토리</a></li>
+    <li><a href="index.html#ip">IP 확장</a></li>
+    <li><a href="program.html">프로그램</a></li>
+    <li><a href="index.html#location">비전</a></li>
+    <li><a href="index.html#final">협업</a></li>
+    <li><a href="investor.html" class="on">투자</a></li>
+    <li><a href="#team">팀</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">IR 문의</a>
+</nav>
+
+
+<!-- ══════════════════════════════════════════
+  HERO
+══════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-badge"><span class="hero-badge-dot"></span>투자자 안내 · Investor Relations · 2026</div>
+  <p class="hero-eyebrow">CONFIDENTIAL · FOR ACCREDITED INVESTORS</p>
+  <h1 class="hero-title">화광동진 IP 플랫폼<br/>투자 제안서</h1>
+  <p class="hero-pitch">실존 원천 IP × 웰니스 치유 관광 × 6차산업 교육의 통합 플랫폼</p>
+  <p class="hero-desc">
+    무너진 자리에서 다시 일어선 한 사람의 실화가 원천 IP가 됩니다.<br/>
+    자서전, 영화, 음악, 교육, 관광이 하나의 생태계로 결합된<br/>
+    화광동진 플랫폼에 투자하십시오.
+  </p>
+  <div class="hero-cta">
+    <a href="#exec"    class="btn btn-p">사업 개요 보기</a>
+    <a href="/docs/ir-deck.pdf" download class="btn btn-g" style="display:inline-flex;align-items:center;gap:.5rem;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      IR 자료 다운로드
+    </a>
+    <a href="#invest"  class="btn btn-o">투자 구조 확인</a>
+    <a href="#contact" class="btn btn-o">IR 미팅 신청</a>
+  </div>
+
+  <div class="hero-kpi">
+    <div class="kpi-strip">
+      <div class="kpi-item"><div class="kpi-val">5억↑</div><div class="kpi-label">연간 매출 목표<br/>(2027 기준)</div></div>
+      <div class="kpi-item"><div class="kpi-val">3개소</div><div class="kpi-label">거점 부지<br/>물한리·신두리·연풍역</div></div>
+      <div class="kpi-item"><div class="kpi-val">8채널</div><div class="kpi-label">OSMU IP 확장<br/>수익 구조</div></div>
+      <div class="kpi-item"><div class="kpi-val">2026</div><div class="kpi-label">1호 캠퍼스<br/>런칭 예정</div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+  §1  EXECUTIVE SUMMARY
+══════════════════════════════════════════ -->
+<div class="divider"><div class="dl"></div><span class="dg">◆</span><div class="dl"></div></div>
+<section id="exec" class="wrap">
+  <p class="eyebrow rv">SECTION 01 · EXECUTIVE SUMMARY</p>
+  <h2 class="sec-title rv">사업 개요</h2>
+
+  <div class="exec-grid">
+    <div>
+      <p class="sec-body rv" style="margin-bottom:2rem">
+        화광동진(和光同塵) IP 플랫폼은 실존 인물의 55년 인생 서사를
+        원천 IP로 삼아, 웰니스 치유 관광·교육·6차산업 농업을 융합한
+        통합 비즈니스 플랫폼입니다.
+        단일 IP가 자서전, 오디오북, 영화, OST, 강연, 치유 숲, 사관학교까지
+        확장되는 OSMU 구조로 설계되어 있습니다.
+      </p>
+      <div class="exec-points">
+        <div class="exec-point rv" style="transition-delay:.06s">
+          <div class="ep-icon">📖</div>
+          <div>
+            <div class="ep-title">검증된 원천 IP</div>
+            <div class="ep-desc">두 번의 복역과 재기를 거친 실존 인물의 자서전 『그래도 나는 사랑하리라』. 허구가 아닌 실화 기반 IP는 시장에서 가장 강한 신뢰를 만듭니다.</div>
+          </div>
+        </div>
+        <div class="exec-point rv" style="transition-delay:.12s">
+          <div class="ep-icon">🌿</div>
+          <div>
+            <div class="ep-title">실물 자산 기반</div>
+            <div class="ep-desc">영동 물한리 7,000평, 태안 신두리 6,800평, 괴산 연풍역 5,600평. IP 수익과 실물 부동산 가치 상승이 함께 작동합니다.</div>
+          </div>
+        </div>
+        <div class="exec-point rv" style="transition-delay:.18s">
+          <div class="ep-icon">📈</div>
+          <div>
+            <div class="ep-title">4개 독립 수익 채널</div>
+            <div class="ep-desc">IP 라이선싱, 웰니스 관광, 교육 프로그램, 묘목·농산물 판매. 어느 한 채널이 부진해도 전체 수익이 보호되는 분산 구조입니다.</div>
+          </div>
+        </div>
+        <div class="exec-point rv" style="transition-delay:.24s">
+          <div class="ep-icon">🎯</div>
+          <div>
+            <div class="ep-title">성장하는 시장</div>
+            <div class="ep-desc">국내 웰니스 관광 연 12조 시장, K-힐링 IP 글로벌 관심, 인생 2막 교육 수요 급증. 세 개의 성장 시장이 동시에 뒷받침합니다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exec-vision rv" style="transition-delay:.1s">
+      <div class="ev-label">INVESTMENT THESIS</div>
+      <p class="ev-statement">
+        "가장 낮은 곳에서 다시 일어선 이야기가<br/>
+        <em>가장 단단한 비즈니스 자산</em>이 됩니다.<br/>
+        화광동진은 IP 하나로 여덟 개의 문을 엽니다."
+      </p>
+      <div class="ev-divider"></div>
+      <div class="ev-highlights">
+        <div class="evh-item">
+          <div class="evh-num">55년</div>
+          <div class="evh-label">실화 기반<br/>원천 서사</div>
+        </div>
+        <div class="evh-item">
+          <div class="evh-num">8채널</div>
+          <div class="evh-label">OSMU<br/>IP 확장</div>
+        </div>
+        <div class="evh-item">
+          <div class="evh-num">3단계</div>
+          <div class="evh-label">2026–2028<br/>실행 로드맵</div>
+        </div>
+        <div class="evh-item">
+          <div class="evh-num">6차</div>
+          <div class="evh-label">산업 융합<br/>비즈니스</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+  §2  MARKET OPPORTUNITY
+══════════════════════════════════════════ -->
+<div class="market-band">
+  <section id="market" class="wrap">
+    <p class="eyebrow rv">SECTION 02 · MARKET OPPORTUNITY</p>
+    <h2 class="sec-title rv">시장 기회</h2>
+    <p class="sec-body rv" style="margin-bottom:0">세 개의 성장 시장이 동시에 열려 있습니다.</p>
+
+    <div class="market-intro">
+      <div class="rvl" style="transition-delay:.08s">
+        <div class="tam-visual">
+          <div class="tam-circles">
+            <div class="tc-ring tc-ring--tam">
+              <span class="tc-label tc-label--tam">TAM</span>
+            </div>
+            <div class="tc-ring tc-ring--sam">
+              <span class="tc-label tc-label--sam">SAM</span>
+            </div>
+            <div class="tc-ring tc-ring--som">
+              <div class="tc-val">SOM</div>
+              <div class="tc-sub">초기 목표 시장</div>
+            </div>
+          </div>
+          <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:.6rem;width:100%;max-width:280px">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:.72rem">
+              <span style="color:var(--paper-faint)">TAM · 전체 웰니스 관광</span>
+              <span style="color:var(--gold-lt);font-weight:600">~12조</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:.72rem">
+              <span style="color:var(--paper-faint)">SAM · 힐링 리트릿·교육</span>
+              <span style="color:var(--gold-lt);font-weight:600">~3,000억</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:.72rem">
+              <span style="color:var(--paper-faint)">SOM · 초기 3년 목표</span>
+              <span style="color:var(--gold);font-weight:600">15억↑</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rvr" style="transition-delay:.08s">
+        <p class="sec-body" style="margin-bottom:1.5rem">
+          국내 웰니스 관광 시장은 코로나 이후 빠르게 회복되며
+          연평균 두 자릿수 성장세를 이어가고 있습니다.
+          K-힐링 콘텐츠에 대한 글로벌 관심이 높아지고,
+          인생 2막을 설계하는 50대 이상 인구가 급증하는 지금,
+          이 세 가지 흐름이 화광동진 플랫폼의 배경이 됩니다.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:.8rem">
+          <div style="display:flex;align-items:flex-start;gap:.8rem;font-size:.82rem;color:var(--paper-dim)">
+            <span style="color:var(--green);flex-shrink:0;margin-top:.05rem">▲</span>
+            국내 산림 치유·웰니스 관광 시장 연 12조, 연 15% 이상 성장
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.8rem;font-size:.82rem;color:var(--paper-dim)">
+            <span style="color:var(--green);flex-shrink:0;margin-top:.05rem">▲</span>
+            K-힐링 IP: 글로벌 OTT와 출판 시장에서 실화 기반 재기 스토리 수요 증가
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.8rem;font-size:.82rem;color:var(--paper-dim)">
+            <span style="color:var(--green);flex-shrink:0;margin-top:.05rem">▲</span>
+            귀농·귀촌 연 50만 명 돌파, 인생 2막 재설계 교육 시장 급성장
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.8rem;font-size:.82rem;color:var(--paper-dim)">
+            <span style="color:var(--green);flex-shrink:0;margin-top:.05rem">▲</span>
+            MZ 세대 번아웃 급증 — 30~40대 리트릿·명상 프로그램 수요 신규 창출
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="market-cards">
+      <div class="mcard rv" style="transition-delay:.06s">
+        <span class="mc-icon">🌿</span>
+        <div class="mc-figure">12조</div>
+        <div class="mc-trend">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M5 1l4 8H1z"/></svg>
+          연 15% 성장
+        </div>
+        <h3 class="mc-title">국내 웰니스 관광</h3>
+        <p class="mc-desc">코로나 이후 자연 치유·산림 힐링 수요가 구조적으로 증가했습니다. 치유 숲, 명상 리트릿, 산림 치유 프로그램이 새로운 관광 카테고리로 자리잡고 있습니다.</p>
+      </div>
+      <div class="mcard rv" style="transition-delay:.14s">
+        <span class="mc-icon">🎬</span>
+        <div class="mc-figure">글로벌</div>
+        <div class="mc-trend">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M5 1l4 8H1z"/></svg>
+          K-콘텐츠 확산
+        </div>
+        <h3 class="mc-title">K-힐링 IP 시장</h3>
+        <p class="mc-desc">K-드라마·K-뷰티에 이어 실화 기반 K-힐링 콘텐츠가 주목받고 있습니다. 고통과 회복의 서사는 OTT, 출판, 오디오북 포맷에서 강한 흡인력을 가집니다.</p>
+      </div>
+      <div class="mcard rv" style="transition-delay:.22s">
+        <span class="mc-icon">👥</span>
+        <div class="mc-figure">50만↑</div>
+        <div class="mc-trend">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M5 1l4 8H1z"/></svg>
+          귀농·귀촌 연간
+        </div>
+        <h3 class="mc-title">인생 2막 설계 수요</h3>
+        <p class="mc-desc">조기 퇴직자, 귀농·귀촌 인구, 번아웃 직장인이 폭증하고 있습니다. 단순 귀농이 아닌, 삶 전체를 재설계하는 교육과 코칭에 대한 수요가 급격히 커지고 있습니다.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+  §3  BUSINESS MODEL
+══════════════════════════════════════════ -->
+<div class="divider"><div class="dl"></div><span class="dg">◆</span><div class="dl"></div></div>
+<section id="biz" class="wrap">
+  <p class="eyebrow rv">SECTION 03 · BUSINESS MODEL</p>
+  <h2 class="sec-title rv">비즈니스 모델</h2>
+  <p class="sec-body rv">하나의 IP 생태계에서 네 개의 독립 수익 흐름이 작동합니다.</p>
+
+  <div class="bm-streams">
+    <div class="bm-card rv" style="transition-delay:.06s">
+      <div class="bm-head">
+        <div class="bm-head-left">
+          <p class="bm-num">STREAM 01</p>
+          <h3 class="bm-title">IP 라이선싱</h3>
+        </div>
+        <div class="bm-share">20%</div>
+      </div>
+      <div class="bm-body">
+        <p class="bm-desc">자서전, 전자책, 오디오북, 영화·드라마 판권, OST, 강연 계약에서 발생하는 로열티 및 선급 수익. 초기 투자 없이 IP를 활용한 고마진 수익 구조.</p>
+        <div class="bm-bar-wrap">
+          <div class="bm-bar-label"><span>연간 예상 매출</span><span style="color:var(--gold-lt)">약 1억↑</span></div>
+          <div class="bm-bar"><div class="bm-bar-fill" data-w="20" style="width:0%"></div></div>
+        </div>
+        <ul class="bm-items">
+          <li>자서전·전자책·오디오북 판매 수익</li>
+          <li>영화·드라마 시나리오 판권 선급</li>
+          <li>OST 스트리밍·음반 수익</li>
+          <li>기업 강연·코칭 계약</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bm-card rv" style="transition-delay:.14s">
+      <div class="bm-head">
+        <div class="bm-head-left">
+          <p class="bm-num">STREAM 02</p>
+          <h3 class="bm-title">웰니스 관광</h3>
+        </div>
+        <div class="bm-share">30%</div>
+      </div>
+      <div class="bm-body">
+        <p class="bm-desc">피올라 마음학교, 인생 2막 리셋 캠프, 치유 숲 힐링 스테이, 체험 관광 패키지. 참가비 수익과 숙박·식음 수익이 결합된 고단가 B2C 모델.</p>
+        <div class="bm-bar-wrap">
+          <div class="bm-bar-label"><span>연간 예상 매출</span><span style="color:var(--gold-lt)">약 1.5억↑</span></div>
+          <div class="bm-bar"><div class="bm-bar-fill" data-w="30" style="width:0%"></div></div>
+        </div>
+        <ul class="bm-items">
+          <li>피올라 마음학교 참가비 (소규모 12인)</li>
+          <li>인생 2막 리셋 캠프 (20인 × 분기 1회)</li>
+          <li>치유 숲 힐링 스테이 숙박 수익</li>
+          <li>지자체 연계 관광 패키지</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bm-card rv" style="transition-delay:.22s">
+      <div class="bm-head">
+        <div class="bm-head-left">
+          <p class="bm-num">STREAM 03</p>
+          <h3 class="bm-title">교육 플랫폼</h3>
+        </div>
+        <div class="bm-share">25%</div>
+      </div>
+      <div class="bm-body">
+        <p class="bm-desc">6차산업 창업 사관학교, 온라인 멘토링, 감정평가·컨설팅 서비스. 오프라인 집중 교육과 3개월 온라인 사후 지원을 결합한 복합 수익 구조.</p>
+        <div class="bm-bar-wrap">
+          <div class="bm-bar-label"><span>연간 예상 매출</span><span style="color:var(--gold-lt)">약 1.25억↑</span></div>
+          <div class="bm-bar"><div class="bm-bar-fill" data-w="25" style="width:0%"></div></div>
+        </div>
+        <ul class="bm-items">
+          <li>6차산업 창업 사관학교 수강료</li>
+          <li>3개월 온라인 멘토링 구독</li>
+          <li>사업계획서 컨설팅·감정평가</li>
+          <li>대학·평생교육원 연계 수익</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bm-card rv" style="transition-delay:.30s">
+      <div class="bm-head">
+        <div class="bm-head-left">
+          <p class="bm-num">STREAM 04</p>
+          <h3 class="bm-title">농산물·묘목</h3>
+        </div>
+        <div class="bm-share">25%</div>
+      </div>
+      <div class="bm-body">
+        <p class="bm-desc">자작나무·헛개나무·황벽나무 묘목 판매, 산림경영 수익, 치유 농산물 직거래. 연 3억 묘목 매출 목표. 실물 자산이 직접 수익을 만드는 안정적 기반.</p>
+        <div class="bm-bar-wrap">
+          <div class="bm-bar-label"><span>연간 예상 매출</span><span style="color:var(--gold-lt)">약 3억↑</span></div>
+          <div class="bm-bar"><div class="bm-bar-fill" data-w="60" style="width:0%"></div></div>
+        </div>
+        <ul class="bm-items">
+          <li>자작나무·헛개나무 묘목 B2B 판매</li>
+          <li>황벽나무 한약재 수요 대응</li>
+          <li>산림경영사 9동 임대·운영</li>
+          <li>양묘장 3동 직영 및 분양</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revenue Projection Chart -->
+  <div class="rev-chart rv" style="transition-delay:.12s">
+    <p class="rc-title">연간 매출 예상 추이 (단위: 억 원)</p>
+    <div class="rc-bars">
+      <div class="rc-bar-group">
+        <div class="rcb-wrap"><div class="rcb-val">0.8억</div><div class="rcb" data-h="15" style="height:0"></div></div>
+        <div class="rcb-year">2025<br/>기반</div>
+      </div>
+      <div class="rc-bar-group">
+        <div class="rcb-wrap"><div class="rcb-val">2억↑</div><div class="rcb" data-h="40" style="height:0; background:linear-gradient(to top,var(--gold),rgba(201,168,76,.5))"></div></div>
+        <div class="rcb-year" style="color:var(--gold)">2026<br/>런칭</div>
+      </div>
+      <div class="rc-bar-group">
+        <div class="rcb-wrap"><div class="rcb-val">5억↑</div><div class="rcb" data-h="100" style="height:0"></div></div>
+        <div class="rcb-year">2027<br/>성장</div>
+      </div>
+      <div class="rc-bar-group">
+        <div class="rcb-wrap"><div class="rcb-val">10억↑</div><div class="rcb" data-h="140" style="height:0"></div></div>
+        <div class="rcb-year">2028<br/>확장</div>
+      </div>
+    </div>
+    <div class="rc-axis"></div>
+    <p style="font-size:.68rem;color:var(--paper-faint);margin-top:.8rem;text-align:right">※ 상기 수치는 예상치이며 실제 성과와 차이가 있을 수 있습니다</p>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+  §4  PROJECT ROADMAP
+══════════════════════════════════════════ -->
+<div class="divider"><div class="dl"></div><span class="dg">◆</span><div class="dl"></div></div>
+<section id="roadmap" class="wrap">
+  <p class="eyebrow rv">SECTION 04 · PROJECT ROADMAP</p>
+  <h2 class="sec-title rv">프로젝트 로드맵</h2>
+  <p class="sec-body rv">단계별 실행으로 리스크를 분산하고 수익을 단계적으로 실현합니다.</p>
+
+  <div class="roadmap-track">
+
+    <!-- 2025 -->
+    <div class="rm-phase rv" style="transition-delay:.04s">
+      <div class="rm-year">2025</div>
+      <div class="rm-phase-name">기반 조성 · 완료</div>
+      <div class="rm-milestones">
+        <div class="rm-milestone rm-milestone--done">
+          <div class="rms-status"><span class="rms-dot"></span>완료</div>
+          <div class="rms-title">자서전 집필 완료</div>
+        </div>
+        <div class="rm-milestone rm-milestone--done">
+          <div class="rms-status"><span class="rms-dot"></span>완료</div>
+          <div class="rms-title">우솔감정평가법인 본부장 취임</div>
+        </div>
+        <div class="rm-milestone rm-milestone--done">
+          <div class="rms-status"><span class="rms-dot"></span>완료</div>
+          <div class="rms-title">일사천리 컨설팅 개업</div>
+        </div>
+        <div class="rm-milestone rm-milestone--done">
+          <div class="rms-status"><span class="rms-dot"></span>완료</div>
+          <div class="rms-title">모던밸류 주식회사 설립</div>
+        </div>
+        <div class="rm-milestone rm-milestone--done">
+          <div class="rms-status"><span class="rms-dot"></span>완료</div>
+          <div class="rms-title">물한리 7,000평 부지 매입</div>
+        </div>
+        <div class="rm-milestone rm-milestone--done">
+          <div class="rms-status"><span class="rms-dot"></span>완료</div>
+          <div class="rms-title">행운유수 OST 기획 착수</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2026 -->
+    <div class="rm-phase rm-phase--active rv" style="transition-delay:.12s">
+      <div class="rm-year">2026</div>
+      <div class="rm-phase-name">런칭 · 현재 진행 중</div>
+      <div class="rm-milestones">
+        <div class="rm-milestone rm-milestone--now">
+          <div class="rms-status"><span class="rms-dot"></span>진행 중</div>
+          <div class="rms-title">자서전 출판 및 유통</div>
+        </div>
+        <div class="rm-milestone rm-milestone--now">
+          <div class="rms-status"><span class="rms-dot"></span>진행 중</div>
+          <div class="rms-title">행운유수 OST 앨범 제작</div>
+        </div>
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>예정</div>
+          <div class="rms-title">물한리 1호 캠퍼스 착공</div>
+        </div>
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>예정</div>
+          <div class="rms-title">피올라 마음학교 정식 운영</div>
+        </div>
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>예정</div>
+          <div class="rms-title">인생 2막 리셋 캠프 1기</div>
+        </div>
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>예정</div>
+          <div class="rms-title">IP 플랫폼 웹사이트 론칭</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2027 -->
+    <div class="rm-phase rv" style="transition-delay:.20s">
+      <div class="rm-year">2027</div>
+      <div class="rm-phase-name">성장 · IP 확장</div>
+      <div class="rm-milestones">
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>계획</div>
+          <div class="rms-title">영화·드라마 제작사 계약</div>
+        </div>
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>계획</div>
+          <div class="rms-title">6차산업 창업 사관학교 정규 운영</div>
+        </div>
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>계획</div>
+          <div class="rms-title">태안 신두리 2호 캠퍼스 착수</div>
+        </div>
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>계획</div>
+          <div class="rms-title">온라인 교육 플랫폼 론칭</div>
+        </div>
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>계획</div>
+          <div class="rms-title">지자체 협력 사업 본격화</div>
+        </div>
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>계획</div>
+          <div class="rms-title">해외 IP 라이선싱 착수</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2028+ -->
+    <div class="rm-phase rv" style="transition-delay:.28s">
+      <div class="rm-year">2028+</div>
+      <div class="rm-phase-name">확장 · 가맹 모델</div>
+      <div class="rm-milestones">
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>계획</div>
+          <div class="rms-title">괴산 연풍역 3호 거점 오픈</div>
+        </div>
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>계획</div>
+          <div class="rms-title">프랜차이즈 사관학교 모델 구축</div>
+        </div>
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>계획</div>
+          <div class="rms-title">해외 출판·OTT 계약 체결</div>
+        </div>
+        <div class="rm-milestone">
+          <div class="rms-status"><span class="rms-dot"></span>계획</div>
+          <div class="rms-title">웰니스 관광 패키지 해외 판매</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+  §5  INVESTMENT PROPOSAL
+══════════════════════════════════════════ -->
+<div class="inv-hero-band">
+  <section id="invest" class="wrap">
+    <p class="eyebrow rv">SECTION 05 · INVESTMENT PROPOSAL</p>
+    <h2 class="sec-title rv">투자 제안</h2>
+    <p class="sec-body rv">단계별 투자로 리스크를 최소화하고, 다양한 형태의 협력을 환영합니다.</p>
+
+    <div class="inv-grid" style="margin-top:3.5rem">
+      <div class="rvl" style="transition-delay:.06s">
+        <div class="inv-ask">
+          <div class="ia-label">INVESTMENT ASK</div>
+          <div class="ia-amount">협의 가능</div>
+          <div class="ia-sub">투자 규모·방식은 파트너 유형에 따라 맞춤 설계합니다</div>
+          <div class="ia-divider"></div>
+          <div class="ia-items">
+            <div class="ia-item">
+              <div class="ia-icon">🏗️</div>
+              <div>
+                <div class="ia-item-title">인프라 투자</div>
+                <div class="ia-item-desc">물한리 치유 숲 캠퍼스 조성, 양묘장·산림경영사 건립. 실물 자산 지분으로 보장됩니다.</div>
+              </div>
+            </div>
+            <div class="ia-item">
+              <div class="ia-icon">📖</div>
+              <div>
+                <div class="ia-item-title">IP 제작 투자</div>
+                <div class="ia-item-desc">자서전 출판, OST 제작, 영화·드라마 시나리오 개발. 로열티 수익 공유 구조.</div>
+              </div>
+            </div>
+            <div class="ia-item">
+              <div class="ia-icon">🎓</div>
+              <div>
+                <div class="ia-item-title">교육 플랫폼 투자</div>
+                <div class="ia-item-desc">온라인 플랫폼 개발, 커리큘럼 구축. 수강료 수익 공유 및 지분 취득.</div>
+              </div>
+            </div>
+            <div class="ia-item">
+              <div class="ia-icon">🤝</div>
+              <div>
+                <div class="ia-item-title">전략적 파트너십</div>
+                <div class="ia-item-desc">지자체, 교육기관, 관광·숙박 업체. 수익 공유 없는 사업 협력도 환영합니다.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Use of funds -->
+        <div class="funds-breakdown rv" style="transition-delay:.14s">
+          <p class="fb-title">투자금 사용 계획</p>
+          <div class="fb-list">
+            <div class="fb-row">
+              <div class="fb-meta"><span class="fb-name">부지 조성 및 시설 건립</span><span class="fb-pct">40%</span></div>
+              <div class="fb-bar"><div class="fb-fill" data-w="40" style="width:0%"></div></div>
+            </div>
+            <div class="fb-row">
+              <div class="fb-meta"><span class="fb-name">IP 제작 (출판·음악·영상)</span><span class="fb-pct">25%</span></div>
+              <div class="fb-bar"><div class="fb-fill" data-w="25" style="width:0%"></div></div>
+            </div>
+            <div class="fb-row">
+              <div class="fb-meta"><span class="fb-name">온라인 플랫폼 개발</span><span class="fb-pct">15%</span></div>
+              <div class="fb-bar"><div class="fb-fill" data-w="15" style="width:0%"></div></div>
+            </div>
+            <div class="fb-row">
+              <div class="fb-meta"><span class="fb-name">운영비 및 마케팅</span><span class="fb-pct">12%</span></div>
+              <div class="fb-bar"><div class="fb-fill" data-w="12" style="width:0%"></div></div>
+            </div>
+            <div class="fb-row">
+              <div class="fb-meta"><span class="fb-name">예비 및 법무</span><span class="fb-pct">8%</span></div>
+              <div class="fb-bar"><div class="fb-fill" data-w="8" style="width:0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tier cards -->
+      <div class="rvr" style="transition-delay:.06s">
+        <div class="tier-grid" style="margin-top:0">
+          <div class="tier-card">
+            <div class="tier-head">
+              <div class="tier-level">TIER 01</div>
+              <div class="tier-name">파트너 투자</div>
+              <div class="tier-range">소규모 · 협의</div>
+            </div>
+            <div class="tier-body">
+              <ul class="tier-perks">
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>IP 수익 공유 (협의)</li>
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>IR 자료 전체 열람</li>
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>프로그램 우선 참가권</li>
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>분기별 사업 현황 보고</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tier-card tier-card--featured">
+            <div class="tier-head">
+              <div class="tier-level">TIER 02 · 추천</div>
+              <div class="tier-name">전략적 투자</div>
+              <div class="tier-range">중규모 · 협의</div>
+            </div>
+            <div class="tier-body">
+              <ul class="tier-perks">
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>지분 취득 (협의)</li>
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>이사회 참여 권한</li>
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>수익 공유 우선순위</li>
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>IP 공동 개발 참여</li>
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>명의 공동 크레딧</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tier-card">
+            <div class="tier-head">
+              <div class="tier-level">TIER 03</div>
+              <div class="tier-name">앵커 투자</div>
+              <div class="tier-range">대규모 · 협의</div>
+            </div>
+            <div class="tier-body">
+              <ul class="tier-perks">
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>Tier 02 전체 포함</li>
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>우선주 발행 협의</li>
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>거점 명칭 후원권</li>
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>해외 IP 라이선싱 공동</li>
+                <li><span class="tp-check"><span class="tp-tick">✓</span></span>전담 IR 매니저 배정</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="rv" style="transition-delay:.2s;margin-top:1.5rem;border:1px solid var(--gold-b);border-radius:4px;padding:1.6rem 2rem;background:var(--gold-faint)">
+          <p style="font-size:.68rem;letter-spacing:.18em;color:var(--gold);margin-bottom:.6rem">INVESTOR NOTE</p>
+          <p style="font-size:.82rem;line-height:1.85;color:var(--paper-dim)">
+            모든 투자 구조는 투자자의 유형, 규모, 목표에 맞게 맞춤 설계됩니다.
+            지자체 협력, 기관 투자, 개인 엔젤 투자, 전략적 파트너십 등
+            모든 형태의 협력을 열린 자세로 논의합니다.
+            아래 연락처로 IR 미팅을 신청해 주십시오.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+  §6  TEAM
+══════════════════════════════════════════ -->
+<div class="divider"><div class="dl"></div><span class="dg">◆</span><div class="dl"></div></div>
+<section id="team" class="wrap">
+  <p class="eyebrow rv">SECTION 06 · TEAM</p>
+  <h2 class="sec-title rv">팀 소개</h2>
+  <p class="sec-body rv">화광동진 프로젝트는 실존 경험을 가진 창립자의 원천 서사 위에 세워진 플랫폼입니다.</p>
+
+  <div class="team-founder-card rv" style="transition-delay:.08s">
+
+    <!-- LEFT: Photo Panel -->
+    <div class="team-photo-panel">
+      <div class="team-avatar">
+        <div class="team-avatar-ring"></div>
+        <div class="team-avatar-ring-inner"></div>
+        <div class="team-avatar-img">
+          <span class="team-avatar-mono">주</span>
+        </div>
+      </div>
+      <p class="team-avatar-placeholder-label">PHOTO PLACEHOLDER</p>
+
+      <div class="team-role-badge">
+        <span class="team-role-dot"></span>
+        FOUNDER · CREATOR
+      </div>
+
+      <div class="team-cred-list">
+        <div class="team-cred-item">조경기사 / 조경기능사</div>
+        <div class="team-cred-item">종자기능사</div>
+        <div class="team-cred-item">우솔감정평가법인 본부장</div>
+        <div class="team-cred-item">일사천리 컨설팅 대표</div>
+        <div class="team-cred-item">원광디지털대학교 재학</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Info Panel -->
+    <div class="team-info-panel">
+
+      <div class="team-name-block">
+        <div class="team-name-ko">주광현</div>
+        <div class="team-name-desc">화광동진 프로젝트 창립자</div>
+        <div class="team-name-sub">1970년생 · 전북 김제 출신 · IP 플랫폼 기획·운영</div>
+      </div>
+
+      <div class="team-section-grid">
+        <div>
+          <div class="team-block-label">BACKGROUND</div>
+          <p class="team-block-text">
+            실제 창업, 몰락, 복역, 재기의 과정을 거친 인생 서사를 기반으로 자서전 IP 플랫폼을 기획했습니다.
+            30년 이상의 사업 경험과 법적 위기 극복의 서사는 프로젝트의 핵심 원천 자산입니다.
+          </p>
+        </div>
+        <div>
+          <div class="team-block-label">VISION</div>
+          <p class="team-block-text">
+            개인의 재기 경험을 사회적 치유 플랫폼으로 확장합니다. 웰니스 치유 관광, 6차산업 사관학교, OSMU IP 비즈니스를 통해 인생 2막을 모델화합니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="team-quote">
+        <p class="team-quote-text">
+          "가장 낮은 곳에서 다시 일어선 이야기가<br/>
+          가장 단단한 자산이 됩니다."
+        </p>
+        <p class="team-quote-attr">— 주광현, 화광동진 창립자</p>
+      </div>
+
+      <div class="team-badge-strip">
+        <span class="team-badge hi">자서전 IP</span>
+        <span class="team-badge hi">웰니스 치유 관광</span>
+        <span class="team-badge hi">6차산업 사관학교</span>
+        <span class="team-badge">OSMU 콘텐츠</span>
+        <span class="team-badge">산림경영</span>
+        <span class="team-badge">감정평가</span>
+        <span class="team-badge">컨설팅</span>
+        <span class="team-badge">명상·코칭</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+  §7  CONTACT
+══════════════════════════════════════════ -->
+<div class="divider"><div class="dl"></div><span class="dg">◆</span><div class="dl"></div></div>
+<section id="contact" class="wrap">
+  <p class="eyebrow rv">SECTION 07 · CONTACT</p>
+  <h2 class="sec-title rv">IR 문의 및 미팅 신청</h2>
+  <p class="sec-body rv">IR 미팅은 방문 또는 온라인 화상으로 진행됩니다. 양식 제출 후 3영업일 내 연락드립니다.</p>
+
+  <div class="contact-grid">
+    <div class="contact-left rvl">
+      <div class="cinfo-card">
+        <div class="ci-label">이메일</div>
+        <div class="ci-val"><a href="mailto:haengyunyusu@gmail.com">haengyunyusu@gmail.com</a></div>
+      </div>
+      <div class="cinfo-card">
+        <div class="ci-label">IR 담당</div>
+        <div class="ci-val">화광동진 IR팀<br/><span style="font-size:.78rem;color:var(--paper-faint)">방문 미팅은 사전 예약 필수</span></div>
+      </div>
+      <div class="cinfo-card">
+        <div class="ci-label">소재지</div>
+        <div class="ci-val">충북 영동군 물한리 (본사)<br/>서울 사무소 (협의 가능)</div>
+      </div>
+      <div class="ir-dl-card">
+        <div class="ir-dl-label">IR DOCUMENT · PDF</div>
+        <div class="ir-dl-title">화광동진 IR 덱 2026</div>
+        <div class="ir-dl-desc">사업 개요, 시장 분석, 수익 구조, 투자 조건, 2026~2028 로드맵이 담긴 공식 투자 제안서입니다.</div>
+        <div class="ir-dl-meta">
+          <span class="ir-dl-meta-item">PDF · 28페이지</span>
+          <span class="ir-dl-meta-item">2026년 1분기 기준</span>
+          <span class="ir-dl-meta-item">기밀 자료</span>
+        </div>
+        <a href="/docs/ir-deck.pdf" download class="btn-ir-dl">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          IR 자료 다운로드
+        </a>
+      </div>
+      <div class="dl-grid">
+        <div class="dl-btn">
+          <span class="dl-btn-icon">📋</span>
+          <div class="dl-btn-text">
+            <div class="dl-btn-name">사업계획서</div>
+            <div class="dl-btn-sub">미팅 후 발송</div>
+          </div>
+        </div>
+        <div class="dl-btn">
+          <span class="dl-btn-icon">💰</span>
+          <div class="dl-btn-text">
+            <div class="dl-btn-name">투자제안서</div>
+            <div class="dl-btn-sub">미팅 후 발송</div>
+          </div>
+        </div>
+        <div class="dl-btn">
+          <span class="dl-btn-icon">📊</span>
+          <div class="dl-btn-text">
+            <div class="dl-btn-name">수익구조도</div>
+            <div class="dl-btn-sub">미팅 후 발송</div>
+          </div>
+        </div>
+        <div class="dl-btn">
+          <span class="dl-btn-icon">🗓️</span>
+          <div class="dl-btn-text">
+            <div class="dl-btn-name">로드맵</div>
+            <div class="dl-btn-sub">미팅 후 발송</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card rvr">
+      <h3 class="form-title">IR 미팅 신청서</h3>
+      <div class="form-row-2">
+        <div>
+          <label class="form-label">성함</label>
+          <input class="form-input" type="text" placeholder="홍길동"/>
+        </div>
+        <div>
+          <label class="form-label">소속 기관</label>
+          <input class="form-input" type="text" placeholder="기관 또는 개인"/>
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div>
+          <label class="form-label">연락처</label>
+          <input class="form-input" type="tel" placeholder="010-0000-0000"/>
+        </div>
+        <div>
+          <label class="form-label">이메일</label>
+          <input class="form-input" type="email" placeholder="email@example.com"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">투자 유형</label>
+        <select class="form-input">
+          <option value="">투자 유형을 선택해주세요</option>
+          <option>개인 투자 (엔젤)</option>
+          <option>기관 투자 (VC·PE)</option>
+          <option>지자체·공공 기관</option>
+          <option>전략적 파트너십</option>
+          <option>IP 공동 개발</option>
+          <option>기타 협력 제안</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">관심 분야</label>
+        <select class="form-input">
+          <option value="">주요 관심 분야를 선택해주세요</option>
+          <option>IP 라이선싱 (출판·영화·OST)</option>
+          <option>웰니스 관광 인프라</option>
+          <option>교육 플랫폼</option>
+          <option>농산물·묘목 사업</option>
+          <option>전체 플랫폼 통합 투자</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">미팅 방식</label>
+        <select class="form-input">
+          <option value="">미팅 방식을 선택해주세요</option>
+          <option>온라인 화상 미팅</option>
+          <option>서울 사무소 방문</option>
+          <option>물한리 현장 방문</option>
+          <option>이메일 자료 검토 후 결정</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">문의 내용</label>
+        <textarea class="form-input" placeholder="투자 규모, 관심 사항, 희망 미팅 일정, 기타 질문 등을 자유롭게 적어주십시오."></textarea>
+      </div>
+      <button class="btn btn-p form-submit">미팅 신청서 제출</button>
+      <p class="form-note">제출 후 3영업일 내 IR 담당자가 연락드립니다</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- FINAL CTA -->
+<div class="divider"><div class="dl"></div><span class="dg">◆</span><div class="dl"></div></div>
+<div class="final">
+  <div class="final-accent rv">
+    <div class="fa-line"></div><span class="fa-gem">◆</span><div class="fa-line"></div>
+  </div>
+  <h2 class="final-text rv">
+    가장 낮은 곳에서 다시 일어선 이야기가<br/>
+    <em>가장 단단한 자산</em>이 됩니다.
+  </h2>
+  <p class="final-sub rv">화광동진 IR팀은 여러분의 문의를 기다립니다</p>
+  <div class="final-btns rv" style="transition-delay:.12s">
+    <a href="story.html"   class="btn btn-o">스토리 읽기</a>
+    <a href="program.html" class="btn btn-o">프로그램 보기</a>
+    <a href="#contact"     class="btn btn-p">IR 미팅 신청</a>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-brand">화광동진 · 和光同塵</div>
+  <p class="foot-copy">📱 010-7520-9445 &nbsp;|&nbsp; ✉️ haengyunyusu@gmail.com &nbsp;|&nbsp; <a href="https://pf.kakao.com/_xbWEXj" target="_blank" style="color:var(--gold)">💬 카카오 문의</a><br/>© 2026 · 인생 2막 웰니스 치유 관광 사관학교 · All rights reserved</p>
+</footer>
+
+<script>
+/* ── Canvas ── */
+(function(){
+  const cv=document.getElementById('bg-canvas'),ctx=cv.getContext('2d');
+  let W,H;const pts=[];
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight}
+  resize();window.addEventListener('resize',resize);
+  class P{constructor(){this.init(true)}init(r){this.x=Math.random()*W;this.y=r?Math.random()*H:H+6;this.rad=Math.random()*1.1+.2;this.a=Math.random()*.08+.01;this.vx=(Math.random()-.5)*.1;this.vy=-(Math.random()*.18+.04);this.lf=1;this.dc=Math.random()*.0007+.00015}tick(){this.x+=this.vx;this.y+=this.vy;this.lf-=this.dc;if(this.lf<=0||this.y<-8)this.init(false)}draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.rad,0,Math.PI*2);ctx.fillStyle=`rgba(201,168,76,${this.a*this.lf})`;ctx.fill()}}
+  for(let i=0;i<90;i++)pts.push(new P());
+  function ink(){ctx.save();ctx.strokeStyle='#c9a84c';ctx.lineCap='round';ctx.lineWidth=90;ctx.globalAlpha=.016;ctx.beginPath();ctx.moveTo(0,H*.1);ctx.bezierCurveTo(W*.25,H*.02,W*.65,H*.18,W,H*.07);ctx.stroke();ctx.lineWidth=55;ctx.globalAlpha=.012;ctx.beginPath();ctx.moveTo(0,H*.86);ctx.bezierCurveTo(W*.35,H*.97,W*.68,H*.77,W,H*.9);ctx.stroke();ctx.restore()}
+  (function loop(){ctx.clearRect(0,0,W,H);ink();pts.forEach(p=>{p.tick();p.draw()});requestAnimationFrame(loop)})();
+})();
+
+/* ── Scroll reveal + bar animations ── */
+(function(){
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting)return;
+      const el=e.target;
+      el.classList.add('on');
+      /* animate bars */
+      el.querySelectorAll('.bm-bar-fill,.fb-fill').forEach(b=>{
+        b.style.width=(b.dataset.w||0)+'%';
+      });
+      /* animate chart bars */
+      el.querySelectorAll('.rcb').forEach(b=>{
+        b.style.height=(b.dataset.h||0)+'px';
+      });
+      io.unobserve(el);
+    });
+  },{threshold:.09});
+  document.querySelectorAll('.rv,.rvl,.rvr').forEach(el=>io.observe(el));
+  /* also trigger bar anims when parent reveals */
+  document.querySelectorAll('.bm-card,.rev-chart,.funds-breakdown').forEach(el=>{
+    new IntersectionObserver(([e])=>{
+      if(!e.isIntersecting)return;
+      el.querySelectorAll('.bm-bar-fill,.fb-fill').forEach(b=>{b.style.width=(b.dataset.w||0)+'%'});
+      el.querySelectorAll('.rcb').forEach(b=>{b.style.height=(b.dataset.h||0)+'px'});
+    },{threshold:.3}).observe(el);
+  });
+})();
+
+/* ── Smooth anchor ── */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}
+  });
+});
+
+/* ── Nav scroll ── */
+(function(){
+  const nav=document.getElementById('main-nav');
+  window.addEventListener('scroll',()=>{
+    if(window.scrollY>60){nav.style.background='rgba(7,9,15,.97)';nav.style.backdropFilter='blur(12px)';nav.style.borderBottom='1px solid rg
