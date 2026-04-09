@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>행운유수 — 그래도 나는 사랑하리라</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;900&family=Noto+Sans+KR:wght@300;400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a12;
+    --deep: #080810;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dim: #7a6230;
+    --silver: #b8bcc8;
+    --mist: #8a8fa8;
+    --paper: #f5f0e8;
+    --crimson: #8b1a2a;
+    --water: rgba(100,130,180,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--deep);
+    color: var(--silver);
+    font-family: 'Noto Sans KR', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ── 물결 캔버스 배경 ── */
+  #water-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    opacity: 0.18;
+    pointer-events: none;
+  }
+
+  /* ── 먹 번짐 오버레이 ── */
+  .ink-overlay {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 80%, rgba(180,140,60,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 60% at 80% 20%, rgba(60,80,140,0.06) 0%, transparent 60%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* ── 섹션 공통 ── */
+  section { position: relative; z-index: 2; }
+
+  /* ══════════════════════════
+     HERO
+  ══════════════════════════ */
+  #hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 100% 80% at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 70%);
+  }
+
+  .hero-hanja {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(4rem, 12vw, 10rem);
+    font-weight: 900;
+    letter-spacing: 0.3em;
+    color: transparent;
+    background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 40%, var(--gold-light) 60%, var(--gold-dim) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    line-height: 1;
+    animation: fadeDown 1.6s cubic-bezier(0.16,1,0.3,1) both;
+    text-shadow: none;
+    filter: drop-shadow(0 0 40px rgba(201,168,76,0.3));
+  }
+
+  .hero-hangul {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1rem, 3vw, 1.8rem);
+    font-weight: 300;
+    letter-spacing: 0.8em;
+    color: var(--mist);
+    margin-top: 0.8rem;
+    animation: fadeDown 1.6s 0.2s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  .hero-divider {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 2.5rem auto;
+    animation: fadeDown 1.6s 0.4s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  .hero-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.4rem, 4vw, 2.8rem);
+    font-weight: 600;
+    color: var(--paper);
+    letter-spacing: 0.15em;
+    animation: fadeDown 1.6s 0.5s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(0.8rem, 1.8vw, 1rem);
+    color: var(--mist);
+    margin-top: 1rem;
+    letter-spacing: 0.3em;
+    animation: fadeDown 1.6s 0.7s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    margin-top: 2.5rem;
+    padding: 0.6rem 2rem;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    font-family: 'Cinzel', serif;
+    animation: fadeDown 1.6s 0.9s cubic-bezier(0.16,1,0.3,1) both;
+    transition: all 0.3s;
+  }
+  .hero-badge:hover {
+    background: rgba(201,168,76,0.08);
+    border-color: var(--gold);
+    letter-spacing: 0.5em;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    animation: fadeDown 2s 1.2s both;
+  }
+  .scroll-hint span {
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    color: var(--gold-dim);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to bottom, var(--gold-dim), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+
+  /* ══════════════════════════
+     철학 인용구
+  ══════════════════════════ */
+  #philosophy {
+    padding: 8rem 2rem;
+    text-align: center;
+    position: relative;
+  }
+
+  #philosophy::before {
+    content: '和光同塵';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Noto Serif KR', serif;
+    font-size: 20vw;
+    font-weight: 900;
+    color: rgba(201,168,76,0.03);
+    letter-spacing: 0.1em;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .phil-quote {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.2rem, 3vw, 2.2rem);
+    font-weight: 300;
+    color: var(--paper);
+    line-height: 2.2;
+    letter-spacing: 0.15em;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 1s cubic-bezier(0.16,1,0.3,1);
+  }
+  .phil-quote.visible { opacity: 1; transform: none; }
+  .phil-quote em {
+    color: var(--gold);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .phil-source {
+    margin-top: 2rem;
+    font-size: 0.85rem;
+    color: var(--gold-dim);
+    letter-spacing: 0.4em;
+    opacity: 0;
+    transition: all 1s 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  .phil-source.visible { opacity: 1; }
+
+  /* ══════════════════════════
+     아티스트 소개
+  ══════════════════════════ */
+  #artist {
+    padding: 6rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.5em;
+    color: var(--gold-dim);
+    margin-bottom: 1rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.8s cubic-bezier(0.16,1,0.3,1);
+  }
+  .section-label.visible { opacity: 1; transform: none; }
+
+  .section-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.8rem, 5vw, 3.5rem);
+    font-weight: 900;
+    color: var(--paper);
+    line-height: 1.2;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.9s 0.1s cubic-bezier(0.16,1,0.3,1);
+  }
+  .section-title.visible { opacity: 1; transform: none; }
+
+  .artist-body {
+    margin-top: 2.5rem;
+    font-size: 1rem;
+    line-height: 2.2;
+    color: var(--silver);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.9s 0.2s cubic-bezier(0.16,1,0.3,1);
+  }
+  .artist-body.visible { opacity: 1; transform: none; }
+  .artist-body em { color: var(--gold); font-style: normal; }
+
+  /* ══════════════════════════
+     트랙리스트
+  ══════════════════════════ */
+  #tracklist {
+    padding: 6rem 2rem;
+    background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.02), transparent);
+  }
+
+  .tracklist-header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 4rem;
+  }
+
+  .part-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.6em;
+    color: var(--gold);
+    margin: 3rem 0 1.5rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .part-label::before, .part-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim));
+  }
+  .part-label::after {
+    background: linear-gradient(90deg, var(--gold-dim), transparent);
+  }
+
+  .track-card {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 2rem;
+    border: 1px solid rgba(201,168,76,0.08);
+    margin-bottom: 0.8rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+    opacity: 0;
+    transform: translateX(-30px);
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .track-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .track-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.04), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .track-card:hover {
+    border-color: rgba(201,168,76,0.3);
+    transform: translateX(6px) !important;
+  }
+  .track-card:hover::before { opacity: 1; }
+  .track-card:hover::after { opacity: 1; }
+  .track-card.visible { opacity: 1; transform: translateX(0); }
+
+  .track-num {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    color: var(--gold-dim);
+    letter-spacing: 0.1em;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .track-info h3 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--paper);
+    transition: color 0.3s;
+  }
+  .track-card:hover .track-info h3 { color: var(--gold-light); }
+
+  .track-info p {
+    font-size: 0.8rem;
+    color: var(--mist);
+    margin-top: 0.3rem;
+    letter-spacing: 0.05em;
+  }
+
+  .track-mood {
+    font-size: 0.7rem;
+    color: var(--gold-dim);
+    letter-spacing: 0.15em;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .track-star {
+    display: inline-block;
+    color: var(--gold);
+    margin-left: 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  /* ── 재생 중 트랙 강조 ── */
+  .track-card.playing {
+    border-color: rgba(201,168,76,0.55);
+    background: rgba(201,168,76,0.05);
+    transform: translateX(6px) !important;
+  }
+  .track-card.playing::before { opacity: 1; }
+  .track-card.playing .track-num { color: var(--gold); }
+  .track-card.playing .track-info h3 { color: var(--gold-light); }
+  .track-play-icon {
+    font-size: 1.1rem;
+    color: var(--gold-dim);
+    transition: color 0.3s;
+    flex-shrink: 0;
+  }
+  .track-card.playing .track-play-icon { color: var(--gold); }
+  .track-card:hover .track-play-icon { color: var(--gold); }
+
+  /* ── 고정 플레이어 바 ── */
+  #player-wrapper {
+    padding-bottom: 80px; /* 플레이어 바 높이만큼 본문 여백 */
+  }
+
+  /* ══════════════════════════
+     핵심 트랙 — 고해
+  ══════════════════════════ */
+  #highlight {
+    padding: 8rem 2rem;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .highlight-block {
+    padding: 4rem;
+    border: 1px solid rgba(139,26,42,0.4);
+    position: relative;
+    background: linear-gradient(135deg, rgba(139,26,42,0.06), transparent);
+    opacity: 0;
+    transition: all 1s cubic-bezier(0.16,1,0.3,1);
+    transform: scale(0.97);
+  }
+  .highlight-block.visible { opacity: 1; transform: scale(1); }
+
+  .highlight-block::before {
+    content: '苦海';
+    position: absolute;
+    right: 2rem; top: 1rem;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    color: rgba(139,26,42,0.15);
+    letter-spacing: 0.1em;
+  }
+
+  .highlight-tag {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.5em;
+    color: var(--crimson);
+    margin-bottom: 1rem;
+  }
+
+  .highlight-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--paper);
+    margin-bottom: 1.5rem;
+  }
+
+  .highlight-lyrics {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.1rem;
+    line-height: 2.5;
+    color: var(--silver);
+    border-left: 2px solid var(--crimson);
+    padding-left: 1.5rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+  }
+
+  .highlight-desc {
+    font-size: 0.9rem;
+    color: var(--mist);
+    line-height: 1.9;
+    margin-top: 1.5rem;
+  }
+
+  /* ══════════════════════════
+     로드맵
+  ══════════════════════════ */
+  #roadmap {
+    padding: 6rem 2rem;
+    text-align: center;
+  }
+
+  .roadmap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    max-width: 860px;
+    margin: 4rem auto 0;
+  }
+
+  .roadmap-card {
+    padding: 2.5rem 2rem;
+    border: 1px solid rgba(201,168,76,0.12);
+    position: relative;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.16,1,0.3,1);
+  }
+  .roadmap-card.visible { opacity: 1; transform: none; }
+  .roadmap-card:nth-child(2) { transition-delay: 0.15s; }
+  .roadmap-card:nth-child(3) { transition-delay: 0.3s; }
+
+  .roadmap-card:hover {
+    border-color: rgba(201,168,76,0.35);
+    background: rgba(201,168,76,0.03);
+  }
+
+  .roadmap-step {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    color: rgba(201,168,76,0.2);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .roadmap-card h3 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.1rem;
+    color: var(--paper);
+    margin: 1rem 0 0.6rem;
+  }
+
+  .roadmap-card p {
+    font-size: 0.82rem;
+    color: var(--mist);
+    line-height: 1.8;
+  }
+
+  .roadmap-year {
+    display: inline-block;
+    margin-top: 1.2rem;
+    padding: 0.3rem 1rem;
+    border: 1px solid var(--gold-dim);
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+  }
+
+  /* ══════════════════════════
+     마지막 인용
+  ══════════════════════════ */
+  #closing {
+    padding: 10rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #closing::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .closing-main {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.6rem, 5vw, 3.5rem);
+    font-weight: 900;
+    color: var(--paper);
+    letter-spacing: 0.12em;
+    line-height: 1.6;
+    opacity: 0;
+    transition: all 1.2s cubic-bezier(0.16,1,0.3,1);
+    transform: translateY(20px);
+  }
+  .closing-main.visible { opacity: 1; transform: none; }
+  .closing-main em {
+    color: var(--gold);
+    font-style: normal;
+    display: block;
+  }
+
+  .closing-sub {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: var(--gold-dim);
+    letter-spacing: 0.4em;
+    opacity: 0;
+    transition: all 1s 0.3s cubic-bezier(0.16,1,0.3,1);
+  }
+  .closing-sub.visible { opacity: 1; }
+
+  /* ══════════════════════════
+     푸터
+  ══════════════════════════ */
+  footer {
+    padding: 3rem 2rem;
+    text-align: center;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    position: relative; z-index: 2;
+  }
+
+  footer p {
+    font-size: 0.75rem;
+    color: var(--gold-dim);
+    letter-spacing: 0.3em;
+    line-height: 2;
+  }
+
+  /* ══════════════════════════
+     네비게이션
+  ══════════════════════════ */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(8,8,16,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .nav-logo {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    color: var(--mist);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* ══════════════════════════
+     애니메이션
+  ══════════════════════════ */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+  @keyframes ripple {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  /* 클릭 리플 */
+  .ripple-circle {
+    position: fixed;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.4);
+    pointer-events: none;
+    transform: scale(1);
+    opacity: 1;
+    z-index: 9999;
+    animation: ripple 0.8s cubic-bezier(0,0.5,0.5,1) forwards;
+  }
+
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    nav { padding: 1rem 1.5rem; }
+    .highlight-block { padding: 2rem; }
+    .track-card { grid-template-columns: 40px 1fr; }
+    .track-mood { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="water-canvas"></canvas>
+<div class="ink-overlay"></div>
+
+<!-- 네비게이션 -->
+<nav id="nav">
+  <div class="nav-logo"><a href="index.html" style="text-decoration:none;color:inherit;">行雲流水</a></div>
+  <ul class="nav-links">
+    <li><a href="index.html">홈</a></li>
+    <li><a href="story.html">스토리</a></li>
+    <li><a href="album.html#tracklist">트랙리스트</a></li>
+    <li><a href="program.html">프로그램</a></li>
+    <li><a href="investor.html">투자</a></li>
+    <li><a href="app.html">📱앱</a></li>
+  </ul>
+</nav>
+
+<!-- ── 히어로 ── -->
+<section id="hero">
+  <div class="hero-hanja">行雲流水</div>
+  <div class="hero-hangul">행 운 유 수</div>
+  <div class="hero-divider"></div>
+  <div class="hero-title">그래도 나는 사랑하리라</div>
+  <div class="hero-subtitle">정규 1집 · 화광동진 자서전 원작 OST 앨범</div>
+  <div class="hero-badge">ALBUM 2026</div>
+  <div class="scroll-hint">
+    <span>SCROLL</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ── 철학 인용구 ── -->
+<section id="philosophy">
+  <p class="phil-quote scroll-reveal">
+    배신당하고, 실패하고, 쓰러져도<br>
+    <em>그래도 나는 사랑하리라</em>
+  </p>
+  <p class="phil-source scroll-reveal">— 화광동진(和光同塵) · 작사·작곡가 행운유수</p>
+</section>
+
+<!-- ── 아티스트 소개 ── -->
+<section id="artist">
+  <p class="section-label scroll-reveal">ARTIST</p>
+  <h2 class="section-title scroll-reveal">행운유수<br>行雲流水</h2>
+  <div class="artist-body scroll-reveal">
+    <em>'행운유수(行雲流水)'</em>는 흘러가는 구름, 흐르는 물 — 억지 없이 자연스럽게 흐르되 멈추지 않는 삶의 자세를 담은 이름입니다.<br><br>
+    노자 도덕경의 <em>'화광동진(和光同塵)'</em> — 빛을 감추고 티끌과 하나 되는 철학을 음악으로 빚어냅니다. 전북 김제의 유년기부터, 노동 현장의 땀, IMF의 절망, 배신의 밤, 그리고 인생 2막의 새벽까지 — 57년의 여정이 시네마틱 OST로 살아 숨쉽니다.<br><br>
+    류이치 사카모토의 정밀함, 이소라의 감성, 정태춘의 서사 — 세 거장의 결이 하나로 만나는 자리.
+  </div>
+</section>
+
+<!-- ── 트랙리스트 ── -->
+<section id="tracklist">
+  <div class="tracklist-header">
+    <p class="section-label scroll-reveal" style="text-align:center;transform:none">TRACKLIST</p>
+    <h2 class="section-title scroll-reveal" style="text-align:center">9곡, 57년의 여정</h2>
+    <!-- 🔥 OST 전체 듣기 버튼 -->
+    <div style="text-align:center; margin-top:30px;">
+      <button id="start-ost-btn" style="
+        padding:14px 28px;
+        background:#d4af37;
+        color:#000;
+        font-weight:bold;
+        font-size:16px;
+        border:none;
+        cursor:pointer;
+        border-radius:4px;
+      ">
+        🎧 OST 전체 듣기
+      </button>
+    </div>
+  </div>
+
+  <div class="part-label">1부 — 강호(江湖) · 꿈을 품다</div>
+
+  <div class="track-card scroll-reveal" onclick="playTrack(0)">
+    <div class="track-num">Track<br>01</div>
+    <div class="track-info">
+      <h3>금강을 건너며</h3>
+      <p>유년기 · 전북 김제 고향</p>
+    </div>
+    <div class="track-mood">피아노 + 현악<br>따뜻함 · 그리움</div>
+    <div class="track-play-icon">▶</div>
+  </div>
+
+  <div class="track-card scroll-reveal" onclick="playTrack(1)">
+    <div class="track-num">Track<br>02</div>
+    <div class="track-info">
+      <h3>막내의 눈물</h3>
+      <p>8남매 중 막내의 성장</p>
+    </div>
+    <div class="track-mood">첼로 솔로<br>외로움 · 순수함</div>
+    <div class="track-play-icon">▶</div>
+  </div>
+
+  <div class="track-card scroll-reveal" onclick="playTrack(2)">
+    <div class="track-num">Track<br>03</div>
+    <div class="track-info">
+      <h3>흙과 땀과 꿈</h3>
+      <p>공사판 노동 · 청년기</p>
+    </div>
+    <div class="track-mood">기타 + 타악<br>거친 생명력</div>
+    <div class="track-play-icon">▶</div>
+  </div>
+
+  <div class="part-label">2부 — 고해(苦海) · 불꽃과 절망</div>
+
+  <div class="track-card scroll-reveal" onclick="playTrack(3)">
+    <div class="track-num">Track<br>04</div>
+    <div class="track-info">
+      <h3>일광(一光)</h3>
+      <p>일광상사 창업 · 12년</p>
+    </div>
+    <div class="track-mood">풀 오케스트라<br>열정 · 도전</div>
+    <div class="track-play-icon">▶</div>
+  </div>
+
+  <div class="track-card scroll-reveal" style="border-color:rgba(139,26,42,0.35)" onclick="playTrack(4)">
+    <div class="track-num" style="color:#8b1a2a">Track<br>05</div>
+    <div class="track-info">
+      <h3>고해(苦海)<span class="track-star">★</span></h3>
+      <p>배신 · IMF · 절망의 밤 · 앨범의 심장</p>
+    </div>
+    <div class="track-mood" style="color:#8b1a2a">현악 4중주<br>절망 · 분노 · 슬픔</div>
+    <div class="track-play-icon">▶</div>
+  </div>
+
+  <div class="track-card scroll-reveal" onclick="playTrack(5)">
+    <div class="track-num">Track<br>06</div>
+    <div class="track-info">
+      <h3>그래도</h3>
+      <p>회복 · 선택의 순간</p>
+    </div>
+    <div class="track-mood">피아노 + 보컬<br>결단 · 용서 · 희망</div>
+    <div class="track-play-icon">▶</div>
+  </div>
+
+  <div class="part-label">3부 — 귀향(歸鄕) · 화광동진으로</div>
+
+  <div class="track-card scroll-reveal" style="border-color:rgba(201,168,76,0.25)" onclick="playTrack(6)">
+    <div class="track-num" style="color:#c9a84c">Track<br>07</div>
+    <div class="track-info">
+      <h3>화광동진<span class="track-star">★</span></h3>
+      <p>철학적 각성 · 인생 2막 선언</p>
+    </div>
+    <div class="track-mood" style="color:#c9a84c">가야금 + 오케스트라<br>깨달음 · 평온</div>
+    <div class="track-play-icon">▶</div>
+  </div>
+
+  <div class="track-card scroll-reveal" onclick="playTrack(7)">
+    <div class="track-num">Track<br>08</div>
+    <div class="track-info">
+      <h3>임업사관학교</h3>
+      <p>충북 영동 물한리 · 새 시작</p>
+    </div>
+    <div class="track-mood">자연음 + 현악<br>새벽 · 설렘</div>
+    <div class="track-play-icon">▶</div>
+  </div>
+
+  <div class="track-card scroll-reveal" onclick="playTrack(8)">
+    <div class="track-num">Track<br>09</div>
+    <div class="track-info">
+      <h3>행운유수</h3>
+      <p>에필로그 · 모든 테마의 귀환</p>
+    </div>
+    <div class="track-mood">전 악기 총출동<br>웅장한 해방</div>
+    <div class="track-play-icon">▶</div>
+  </div>
+</section>
+
+<!-- ===== GLOBAL PLAYER ===== -->
+<div id="player-wrapper" style="position:fixed; bottom:0; left:0; width:100%; background:#0a0f1f; padding:12px; border-top:1px solid rgba(255,215,0,0.2); z-index:999;">
+  <div id="now-playing" style="color:#d4af37; font-size:14px; margin-bottom:6px;">
+    재생 대기 중
+  </div>
+  <audio id="global-player" controls style="width:100%;"></audio>
+</div>
+
+<!-- ── 하이라이트 : 고해 ── -->
+<section id="highlight">
+  <div class="highlight-block scroll-reveal">
+    <p class="highlight-tag">TRACK 05 · CENTERPIECE</p>
+    <h2 class="highlight-title">고해(苦海)</h2>
+    <div class="highlight-lyrics">
+      "누가 나를 세워 주었나<br>
+      누가 나를 무너뜨렸나<br>
+      그래도 강물은 흐른다"
+    </div>
+    <p class="highlight-desc">
+      앨범 최장 트랙 · 7분<br><br>
+      현악 4중주가 불협화음으로 절정을 이루는 순간, 피아노 단 하나의 음이 울리고 — 4초의 완전한 침묵. Track 1 '금강을 건너며'의 피아노 멜로디가 변형되어 귀환하며, 배신과 절망의 한가운데에서 삶은 여전히 흐른다는 것을 말합니다.
+    </p>
+  </div>
+</section>
+
+<!-- ── 로드맵 ── -->
+<section id="roadmap">
+  <p class="section-label scroll-reveal" style="text-align:center;display:block">ROADMAP</p>
+  <h2 class="section-title scroll-reveal" style="text-align:center">3단계 프로젝트</h2>
+
+  <div class="roadmap-grid">
+    <div class="roadmap-card scroll-reveal">
+      <div class="roadmap-step">01</div>
+      <h3>앨범 발매</h3>
+      <p>행운유수 정규 1집<br>9트랙 시네마틱 OST<br>뮤직비디오 포함</p>
+      <div class="roadmap-year">2026</div>
+    </div>
+    <div class="roadmap-card scroll-reveal">
+      <div class="roadmap-step">02</div>
+      <h3>뮤지컬 초연</h3>
+      <p>그래도 나는 사랑하리라<br>소극장 초연 → 대극장<br>3막 구성</p>
+      <div class="roadmap-year">2027</div>
+    </div>
+    <div class="roadmap-card scroll-reveal">
+      <div class="roadmap-step">03</div>
+      <h3>영화화</h3>
+      <p>자서전 원작 장편 영화<br>시네마틱 OST 활용<br>전국 대극장 투어</p>
+      <div class="roadmap-year">2028–2030</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 클로징 ── -->
+<section id="closing">
+  <p class="closing-main scroll-reveal">
+    흘러가는 구름처럼<br>흐르는 물처럼<br>
+    <em>그래도 나는 사랑하리라</em>
+  </p>
+  <p class="closing-sub scroll-reveal">— 행운유수 (行雲流水) · 2026 —</p>
+</section>
+
+<!-- 푸터 -->
+<footer>
+  <p>© 2026 행운유수 (行雲流水)</p>
+  <p>원작: 화광동진(和光同塵) 자서전 「그래도 나는 사랑하리라」</p>
+  <p style="margin-top:0.5rem; font-size:0.65rem; color: rgba(122,98,48,0.5)">일사천리 컨설팅 · 화광동진</p>
+</footer>
+
+<script>
+const tracks = [
+  { title: "01. 금강을 건너며", file: "music/01_금강을_건너며.mp3" },
+  { title: "02. 막내의 눈물",   file: "music/02_막내의_눈물.mp3" },
+  { title: "03. 흙과 땀과 꿈", file: "music/03_흙과_땀과_꿈.mp3" },
+  { title: "04. 일광",          file: "music/04_일광.mp3" },
+  { title: "05. 고해",          file: "music/05_고해.mp3" },
+  { title: "06. 그래도",        file: "music/06_그래도.mp3" },
+  { title: "07. 화광동진",      file: "music/07_화광동진.mp3" },
+  { title: "08. 임업사관학교",  file: "music/08_임업사관학교.mp3" },
+  { title: "09. 행운유수",      file: "music/09_행운유수.mp3" }
+];
+
+let currentTrackIndex = 0;
+const player = document.getElementById("global-player");
+
+function playTrack(index) {
+  currentTrackIndex = index;
+  player.src = tracks[index].file;
+  player.play();
+  document.getElementById("now-playing").textContent = "재생 중 · " + tracks[index].title;
+  document.querySelectorAll(".track-card").forEach((card, i) => {
+    card.classList.toggle("playing", i === index);
+  });
+}
+
+function playAlbumFromStart() {
+  playTrack(0);
+}
+
+player.addEventListener("ended", () => {
+  currentTrackIndex++;
+  if (currentTrackIndex < tracks.length) {
+    playTrack(currentTrackIndex);
+  } else {
+    currentTrackIndex = 0;
+    document.querySelectorAll(".track-card").forEach(c => c.classList.remove("playing"));
+  }
+});
+
+// OST 전체 듣기 버튼
+document.getElementById("start-ost-btn").addEventListener("click", () => {
+  playAlbumFromStart();
+});
+
+// 메인에서 넘어왔을 때 자동 시작
+window.addEventListener("load", () => {
+  if (window.location.hash === "#autoplay") {
+    setTimeout(() => {
+      playAlbumFromStart();
+    }, 500);
+  }
+});
+</script>
+
+<script>
+// ── 물결 캔버스 ──
+const canvas = document.getElementById('water-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, t = 0;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+function drawWater() {
+  ctx.clearRect(0, 0, W, H);
+  const lines = 18;
+  for (let i = 0; i < lines; i++) {
+    const y = (H / lines) * i + H / (lines * 2);
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    for (let x = 0; x <= W; x += 4) {
+      const wave =
+        Math.sin(x * 0.008 + t * 0.4 + i * 0.7) * 12 +
+        Math.sin(x * 0.015 - t * 0.25 + i * 1.1) * 6 +
+        Math.sin(x * 0.003 + t * 0.15) * 20;
+      ctx.lineTo(x, y + wave);
+    }
+    const alpha = 0.08 + Math.sin(i * 0.5 + t * 0.2) * 0.04;
+    ctx.strokeStyle = `rgba(100,130,200,${alpha})`;
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+  t += 0.012;
+  requestAnimationFrame(drawWater);
+}
+drawWater();
+
+// ── 스크롤 네비게이션 ──
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ── 스크롤 애니메이션 ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.scroll-reveal').forEach((el, i) => {
+  observer.observe(el);
+});
+
+// 트랙 카드 순차 등장
+document.querySelectorAll('.track-card').forEach((card, i) => {
+  card.style.transitionDelay = `${i * 0.07}s`;
+  observer.observe(card);
+});
+
+// ── 클릭 리플 ──
+document.addEventListener('click', e => {
+  const r = document.createElement('div');
+  r.className = 'ripple-circle';
+  r.style.left = (e.clientX - 10) + 'px';
+  r.style.top = (e.clientY - 10) + 'px';
+  document.body.appendChild(r);
+  r.addEventListener('animationend', () => r.remove());
+});
+
+// ── 트랙 카드 호버 사운드 시뮬레이션 (시각 강조) ──
+document.querySelectorAll('.track-card').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    card.style.marginLeft = 'calc(50% - 430px + 6px)';
+    card.style.marginRight = 'calc(50% - 430px - 6px)';
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.marginLeft = 'auto';
+    card.style.marginRight = 'auto';
+  });
+});
+</script>
+</body>
+</html>

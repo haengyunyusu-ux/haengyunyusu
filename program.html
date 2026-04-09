@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>프로그램 — 화광동진</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#07090f;--navy-mid:#0d1222;--navy-card:rgba(13,18,34,0.88);
+      --paper:#f0ece2;--paper-dim:rgba(240,236,226,0.62);--paper-faint:rgba(240,236,226,0.30);
+      --gold:#c9a84c;--gold-lt:#dfc06e;--gold-faint:rgba(201,168,76,0.06);--gold-b:rgba(201,168,76,0.18);
+      --serif:'Noto Serif KR',serif;--sans:'Noto Sans KR',sans-serif;--max:1100px;
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--navy);color:var(--paper);font-family:var(--sans);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+    #bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+    nav{position:fixed;inset:0 0 auto;z-index:200;padding:0 3rem;height:64px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(7,9,15,.97),transparent)}
+    .nav-logo a{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold);letter-spacing:.08em;text-decoration:none}
+    .nav-links{display:flex;gap:2.2rem;list-style:none}
+    .nav-links a{font-size:.72rem;letter-spacing:.14em;color:var(--paper-faint);text-decoration:none;transition:color .2s}
+    .nav-links a:hover,.nav-links a.active{color:var(--gold)}
+    .nav-cta{font-size:.72rem;letter-spacing:.1em;padding:.5rem 1.2rem;border:1px solid var(--gold-b);border-radius:2px;color:var(--gold);text-decoration:none;transition:all .25s;white-space:nowrap}
+    .nav-cta:hover{background:rgba(201,168,76,.08)}
+    @media(max-width:860px){.nav-links{display:none}nav{padding:0 1.5rem}}
+
+    .wrap{position:relative;z-index:1;max-width:var(--max);margin:0 auto;padding:7rem 2.5rem}
+    .eyebrow{display:inline-flex;align-items:center;gap:.75rem;font-size:.66rem;letter-spacing:.38em;color:var(--gold);margin-bottom:1.3rem}
+    .eyebrow::before{content:'';display:block;width:24px;height:1px;background:var(--gold);opacity:.55}
+    .sec-title{font-family:var(--serif);font-size:clamp(1.75rem,3.8vw,2.9rem);font-weight:600;line-height:1.22;color:var(--paper);margin-bottom:1rem}
+    .sec-body{font-size:.93rem;line-height:2;color:var(--paper-dim);max-width:560px}
+    .divider{position:relative;z-index:1;width:100%;max-width:var(--max);margin:0 auto;padding:0 2.5rem;display:flex;align-items:center;gap:1.2rem}
+    .div-line{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--gold-b))}
+    .div-line+.div-line{background:linear-gradient(to left,transparent,var(--gold-b))}
+    .div-gem{color:var(--gold);font-size:.7rem;opacity:.45;flex-shrink:0}
+
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.78rem 1.9rem;border-radius:2px;font-family:var(--sans);font-size:.78rem;font-weight:500;letter-spacing:.1em;text-decoration:none;cursor:pointer;border:none;transition:all .28s ease}
+    .btn-p{background:var(--gold);color:#07090f}
+    .btn-p:hover{background:var(--gold-lt);transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,.28)}
+    .btn-o{background:transparent;color:var(--paper-dim);border:1px solid rgba(240,236,226,.2)}
+    .btn-o:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+
+    /* HERO */
+    .hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 6rem}
+    .hero-badge{display:inline-flex;align-items:center;gap:.65rem;border:1px solid var(--gold-b);border-radius:999px;padding:.38rem 1.2rem;font-size:.68rem;letter-spacing:.22em;color:var(--gold);margin-bottom:2rem;opacity:0;animation:fadeUp .9s ease forwards .15s}
+    .hero-title{font-family:var(--serif);font-size:clamp(1.8rem,4.5vw,3.4rem);font-weight:600;line-height:1.25;color:var(--paper);margin-bottom:1.2rem;opacity:0;animation:fadeUp .9s ease forwards .35s}
+    .hero-sub{font-family:var(--serif);font-size:clamp(1rem,2.2vw,1.4rem);font-weight:300;color:var(--gold-lt);margin-bottom:1.6rem;opacity:0;animation:fadeUp .9s ease forwards .5s}
+    .hero-desc{max-width:560px;font-size:.92rem;line-height:2;color:var(--paper-dim);margin-bottom:2.8rem;opacity:0;animation:fadeUp .9s ease forwards .65s}
+    .hero-cta{display:flex;gap:.85rem;flex-wrap:wrap;justify-content:center;opacity:0;animation:fadeUp .9s ease forwards .8s}
+
+    /* PROGRAM DETAIL SECTION */
+    .prog-detail{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
+    @media(max-width:760px){.prog-detail{grid-template-columns:1fr;gap:2.5rem}}
+    .pd-visual{border:1px solid var(--gold-b);border-radius:8px;overflow:hidden;aspect-ratio:4/3;background:linear-gradient(145deg,#080d1a,#05080f);display:flex;align-items:center;justify-content:center;position:relative}
+    .pd-visual-kanji{font-family:var(--serif);font-size:6rem;font-weight:700;color:var(--gold);opacity:.12;line-height:1;user-select:none}
+    .pd-visual-label{position:absolute;bottom:1.5rem;left:0;right:0;text-align:center;font-size:.7rem;letter-spacing:.22em;color:var(--paper-faint)}
+    .pd-visual-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(201,168,76,.08),transparent)}
+
+    .pd-content{}
+    .pd-num{font-size:.62rem;letter-spacing:.32em;color:var(--gold);margin-bottom:.8rem}
+    .pd-title{font-family:var(--serif);font-size:clamp(1.4rem,3.5vw,2.2rem);font-weight:600;color:var(--paper);margin-bottom:.6rem;line-height:1.25}
+    .pd-subtitle{font-size:.85rem;color:var(--gold-lt);margin-bottom:1.4rem;letter-spacing:.05em}
+    .pd-desc{font-size:.88rem;line-height:2;color:var(--paper-dim);margin-bottom:1.8rem}
+    .pd-specs{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:1.8rem}
+    .spec-item{border:1px solid var(--gold-b);border-radius:4px;padding:1rem 1.1rem;background:var(--gold-faint)}
+    .spec-label{font-size:.62rem;letter-spacing:.2em;color:var(--gold);margin-bottom:.35rem}
+    .spec-value{font-size:.85rem;color:var(--paper);line-height:1.5}
+    .pd-curriculum{}
+    .pd-curriculum-title{font-size:.68rem;letter-spacing:.2em;color:var(--gold);margin-bottom:.9rem}
+    .curriculum-list{list-style:none;display:flex;flex-direction:column;gap:.65rem}
+    .curriculum-list li{display:flex;align-items:flex-start;gap:.8rem;font-size:.83rem;line-height:1.7;color:var(--paper-dim)}
+    .curriculum-list li .ci-day{flex-shrink:0;font-size:.6rem;padding:.2rem .55rem;border:1px solid var(--gold-b);border-radius:2px;color:var(--gold);margin-top:.15rem;white-space:nowrap}
+
+    .pd-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.5rem}
+    .pd-tag{font-size:.65rem;padding:.25rem .65rem;border:1px solid rgba(201,168,76,.22);border-radius:2px;color:var(--gold);letter-spacing:.05em}
+
+    /* reverse layout for alternate sections */
+    .prog-detail.rev .pd-visual{order:2}
+    .prog-detail.rev .pd-content{order:1}
+    @media(max-width:760px){.prog-detail.rev .pd-visual,.prog-detail.rev .pd-content{order:unset}}
+
+    /* SCHEDULE */
+    .schedule-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-top:3.5rem}
+    @media(max-width:768px){.schedule-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:480px){.schedule-grid{grid-template-columns:1fr}}
+
+    .quarter-card{border:1px solid var(--gold-b);border-radius:6px;overflow:hidden;background:var(--navy-card)}
+    .q-head{padding:1.2rem 1.5rem;background:rgba(201,168,76,.06);border-bottom:1px solid rgba(201,168,76,.1)}
+    .q-label{font-size:.62rem;letter-spacing:.25em;color:var(--gold);margin-bottom:.3rem}
+    .q-title{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--paper)}
+    .q-body{padding:1.2rem 1.5rem}
+    .q-list{list-style:none;display:flex;flex-direction:column;gap:.7rem}
+    .q-list li{font-size:.78rem;line-height:1.65;color:var(--paper-dim);display:flex;gap:.6rem;align-items:flex-start}
+    .q-list li::before{content:'·';color:var(--gold);flex-shrink:0}
+
+    /* APPLICATION FORM */
+    .app-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;margin-top:3rem}
+    @media(max-width:700px){.app-grid{grid-template-columns:1fr;gap:2rem}}
+    .app-info{display:flex;flex-direction:column;gap:1.5rem}
+    .app-info-card{border:1px solid var(--gold-b);border-radius:4px;padding:1.4rem;background:var(--gold-faint)}
+    .aic-label{font-size:.62rem;letter-spacing:.22em;color:var(--gold);margin-bottom:.5rem}
+    .aic-text{font-size:.86rem;color:var(--paper);line-height:1.6}
+    .form-wrap{border:1px solid var(--gold-b);border-radius:6px;padding:2.5rem 2rem;background:var(--navy-card)}
+    .form-title{font-family:var(--serif);font-size:1.1rem;font-weight:600;color:var(--paper);margin-bottom:1.8rem}
+    .form-row{margin-bottom:1.3rem}
+    .form-label{display:block;font-size:.68rem;letter-spacing:.18em;color:var(--gold);margin-bottom:.5rem}
+    .form-input{width:100%;background:rgba(240,236,226,.04);border:1px solid rgba(240,236,226,.12);border-radius:2px;padding:.75rem 1rem;font-family:var(--sans);font-size:.85rem;color:var(--paper);outline:none;transition:border-color .2s}
+    .form-input:focus{border-color:rgba(201,168,76,.45)}
+    textarea.form-input{resize:vertical;min-height:90px}
+    select.form-input option{background:#0d1222}
+
+    footer{position:relative;z-index:1;border-top:1px solid rgba(240,236,226,.05);padding:2rem 3rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+    .foot-brand{font-family:var(--serif);font-size:.95rem;color:var(--gold);letter-spacing:.07em}
+    .foot-copy{font-size:.65rem;color:rgba(240,236,226,.16);letter-spacing:.1em}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .rv{opacity:0;transform:translateY(26px);transition:opacity .75s ease,transform .75s ease}
+    .rvl{opacity:0;transform:translateX(-22px);transition:opacity .75s ease,transform .75s ease}
+    .rvr{opacity:0;transform:translateX(22px);transition:opacity .75s ease,transform .75s ease}
+    .rv.on,.rvl.on,.rvr.on{opacity:1;transform:none}
+  </style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<nav>
+  <div class="nav-logo"><a href="index.html">화광동진 和光同塵</a></div>
+  <ul class="nav-links">
+    <li><a href="story.html">스토리</a></li>
+    <li><a href="index.html#ip">IP 확장</a></li>
+    <li><a href="program.html" class="active">프로그램</a></li>
+    <li><a href="index.html#location">비전</a></li>
+    <li><a href="index.html#final">협업</a></li>
+    <li><a href="investor.html">투자</a></li>
+  </ul>
+  <a href="#apply" class="nav-cta">참가 신청</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">프로그램 안내 · 2026 운영 예정</div>
+  <h1 class="hero-title">몸과 마음, 그리고 일을<br/>함께 설계합니다</h1>
+  <p class="hero-sub">명상에서 창업까지, 인생 2막의 전 과정을 함께합니다</p>
+  <p class="hero-desc">
+    피올라 마음학교에서 마음을 회복하고,<br/>
+    인생 2막 리셋 캠프에서 방향을 찾고,<br/>
+    6차산업 창업 사관학교에서 새로운 일을 시작합니다.
+  </p>
+  <div class="hero-cta">
+    <a href="#p1" class="btn btn-p">프로그램 보기</a>
+    <a href="#apply" class="btn btn-o">참가 신청</a>
+  </div>
+</section>
+
+<!-- ① 피올라 마음학교 -->
+<div class="divider"><div class="div-line"></div><span class="div-gem">◆</span><div class="div-line"></div></div>
+<section class="wrap" id="p1">
+  <div class="prog-detail">
+    <div class="rvl">
+      <div class="pd-visual">
+        <div class="pd-visual-glow"></div>
+        <div class="pd-visual-kanji">心</div>
+        <div class="pd-visual-label">영동 물한리 · 치유의 숲</div>
+      </div>
+    </div>
+    <div class="rvr">
+      <p class="pd-num">PROGRAM 01</p>
+      <h2 class="pd-title">피올라 마음학교</h2>
+      <p class="pd-subtitle">자연 속에서 마음을 회복하는 치유 리트릿</p>
+      <p class="pd-desc">
+        김연수 교장과 함께하는 명상·호흡·침묵의 과정.
+        자작나무 숲 속에서 쌓인 감정의 무게를 내려놓고,
+        잃어버렸던 자신의 리듬을 되찾습니다.
+        소규모 정예 운영으로 각자의 속도에 맞춰 깊이 들어갑니다.
+      </p>
+      <div class="pd-specs">
+        <div class="spec-item">
+          <div class="spec-label">일정</div>
+          <div class="spec-value">4박 5일 집중 과정<br/>+ 월 1회 정기 모임</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">장소</div>
+          <div class="spec-value">충북 영동<br/>물한리 치유 숲</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">정원</div>
+          <div class="spec-value">회차별 12명<br/>소규모 진행</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">참가비</div>
+          <div class="spec-value">개별 문의<br/>(장학 제도 운영)</div>
+        </div>
+      </div>
+      <div class="pd-curriculum">
+        <p class="pd-curriculum-title">커리큘럼</p>
+        <ul class="curriculum-list">
+          <li><span class="ci-day">1일</span>도착 · 오리엔테이션 · 숲길 걷기 · 첫 호흡 명상</li>
+          <li><span class="ci-day">2일</span>새벽 명상 · 감정 지도 그리기 · 집단 나눔 세션</li>
+          <li><span class="ci-day">3일</span>침묵의 날 (전일 침묵 수행) · 자연 명상</li>
+          <li><span class="ci-day">4일</span>내면 편지 쓰기 · 1:1 코칭 · 의식 의례</li>
+          <li><span class="ci-day">5일</span>마무리 나눔 · 일상 복귀 계획 수립 · 수료</li>
+        </ul>
+      </div>
+      <div class="pd-tags">
+        <span class="pd-tag">명상</span>
+        <span class="pd-tag">마음챙김</span>
+        <span class="pd-tag">감정 회복</span>
+        <span class="pd-tag">집단 나눔</span>
+        <span class="pd-tag">1:1 코칭</span>
+        <span class="pd-tag">소규모 집중</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ② 인생2막 리셋 캠프 -->
+<div class="divider"><div class="div-line"></div><span class="div-gem">◆</span><div class="div-line"></div></div>
+<section class="wrap" id="p2">
+  <div class="prog-detail rev">
+    <div class="rvr">
+      <div class="pd-visual">
+        <div class="pd-visual-glow"></div>
+        <div class="pd-visual-kanji">起</div>
+        <div class="pd-visual-label">인생 2막 · 새로운 챕터</div>
+      </div>
+    </div>
+    <div class="rvl">
+      <p class="pd-num">PROGRAM 02</p>
+      <h2 class="pd-title">인생 2막 리셋 캠프</h2>
+      <p class="pd-subtitle">실패와 번아웃 이후 새로운 삶을 설계하는 프로그램</p>
+      <p class="pd-desc">
+        화광동진의 실화를 바탕으로 참가자 각자의 전환점을 찾습니다.
+        실패를 부끄러워하지 않고 당당히 꺼내놓는 순간,
+        그것이 다음 챕터의 가장 강력한 자산이 됩니다.
+        강연·워크숍·숲 산책·1:1 코칭이 결합된 3박 4일 여정입니다.
+      </p>
+      <div class="pd-specs">
+        <div class="spec-item">
+          <div class="spec-label">일정</div>
+          <div class="spec-value">3박 4일<br/>분기별 1회 운영</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">장소</div>
+          <div class="spec-value">충북 영동<br/>물한리 캠퍼스</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">정원</div>
+          <div class="spec-value">회차별 20명</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">대상</div>
+          <div class="spec-value">퇴직자·실패 경험자<br/>번아웃 직장인</div>
+        </div>
+      </div>
+      <div class="pd-curriculum">
+        <p class="pd-curriculum-title">커리큘럼</p>
+        <ul class="curriculum-list">
+          <li><span class="ci-day">1일</span>화광동진 스토리 강연 · 나의 실패 연표 작성 · 그룹 나눔</li>
+          <li><span class="ci-day">2일</span>자기 서사 워크숍 · 강점 발견 세션 · 숲 산책 명상</li>
+          <li><span class="ci-day">3일</span>1:1 진로 코칭 · 인생 2막 로드맵 설계 · 네트워킹 디너</li>
+          <li><span class="ci-day">4일</span>발표 및 상호 피드백 · 실행 계획 수립 · 수료식</li>
+        </ul>
+      </div>
+      <div class="pd-tags">
+        <span class="pd-tag">재기 설계</span>
+        <span class="pd-tag">진로 코칭</span>
+        <span class="pd-tag">스토리 워크숍</span>
+        <span class="pd-tag">네트워킹</span>
+        <span class="pd-tag">로드맵 수립</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ③ 6차산업 창업 사관학교 -->
+<div class="divider"><div class="div-line"></div><span class="div-gem">◆</span><div class="div-line"></div></div>
+<section class="wrap" id="p3">
+  <div class="prog-detail">
+    <div class="rvl">
+      <div class="pd-visual">
+        <div class="pd-visual-glow"></div>
+        <div class="pd-visual-kanji">業</div>
+        <div class="pd-visual-label">6차산업 · 농업 × 관광 × 교육</div>
+      </div>
+    </div>
+    <div class="rvr">
+      <p class="pd-num">PROGRAM 03</p>
+      <h2 class="pd-title">6차산업 창업 사관학교</h2>
+      <p class="pd-subtitle">농업·관광·교육을 결합한 실전 창업 교육</p>
+      <p class="pd-desc">
+        1차(임업·농업) × 2차(스마트팜 가공) × 3차(교육·관광)를 융합한
+        6차산업 비즈니스 모델을 현장에서 직접 설계합니다.
+        물한리 치유 숲 양묘장에서의 실습부터 감정평가·컨설팅 전문가 멘토링,
+        실제 사업계획서 작성까지 전 과정을 함께합니다.
+      </p>
+      <div class="pd-specs">
+        <div class="spec-item">
+          <div class="spec-label">일정</div>
+          <div class="spec-value">5박 6일 집중<br/>+ 3개월 온라인 멘토링</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">장소</div>
+          <div class="spec-value">물한리 캠퍼스<br/>+ 온라인 병행</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">정원</div>
+          <div class="spec-value">팀 단위 10팀<br/>(팀당 1~3인)</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">수료 후</div>
+          <div class="spec-value">3개월 사후 멘토링<br/>투자 연계 지원</div>
+        </div>
+      </div>
+      <div class="pd-curriculum">
+        <p class="pd-curriculum-title">커리큘럼</p>
+        <ul class="curriculum-list">
+          <li><span class="ci-day">1일</span>6차산업 이론 · 성공 사례 분석 · 팀 빌딩</li>
+          <li><span class="ci-day">2일</span>현장 실습: 양묘장·치유 숲 · 묘목 생산 체험</li>
+          <li><span class="ci-day">3일</span>관광·숙박 모델 설계 · 지자체 협력 전략</li>
+          <li><span class="ci-day">4일</span>사업계획서 작성 · 전문가 중간 피드백</li>
+          <li><span class="ci-day">5일</span>투자 유치 전략 · IR 발표 준비</li>
+          <li><span class="ci-day">6일</span>최종 발표 · 심사 · 수료식 · 네트워킹</li>
+        </ul>
+      </div>
+      <div class="pd-tags">
+        <span class="pd-tag">6차산업</span>
+        <span class="pd-tag">스마트팜</span>
+        <span class="pd-tag">창업 멘토링</span>
+        <span class="pd-tag">현장 실습</span>
+        <span class="pd-tag">사업계획서</span>
+        <span class="pd-tag">투자 연계</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ④ 일정 -->
+<div class="divider"><div class="div-line"></div><span class="div-gem">◆</span><div class="div-line"></div></div>
+<section class="wrap" id="schedule">
+  <p class="eyebrow rv">SECTION 04 · SCHEDULE</p>
+  <h2 class="sec-title rv">2026 일정</h2>
+  <p class="sec-body rv">분기별로 균형 있게 배치된 프로그램 일정입니다. 각 프로그램은 정원이 한정됩니다.</p>
+
+  <div class="schedule-grid">
+    <div class="quarter-card rv" style="transition-delay:.05s">
+      <div class="q-head">
+        <p class="q-label">2026 · 1분기</p>
+        <h3 class="q-title">3월 — 봄 개강</h3>
+      </div>
+      <div class="q-body">
+        <ul class="q-list">
+          <li>3월 7일 — 피올라 마음학교 1기 (4박 5일)</li>
+          <li>3월 22일 — 인생 2막 리셋 캠프 1기 (3박 4일)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quarter-card rv" style="transition-delay:.12s">
+      <div class="q-head">
+        <p class="q-label">2026 · 2분기</p>
+        <h3 class="q-title">6월 — 여름 학기</h3>
+      </div>
+      <div class="q-body">
+        <ul class="q-list">
+          <li>6월 6일 — 피올라 마음학교 2기</li>
+          <li>6월 15일 — 6차산업 창업 사관학교 1기 (5박 6일)</li>
+          <li>6월 27일 — 인생 2막 리셋 캠프 2기</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quarter-card rv" style="transition-delay:.19s">
+      <div class="q-head">
+        <p class="q-label">2026 · 3분기</p>
+        <h3 class="q-title">9월 — 가을 학기</h3>
+      </div>
+      <div class="q-body">
+        <ul class="q-list">
+          <li>9월 5일 — 피올라 마음학교 3기</li>
+          <li>9월 20일 — 6차산업 창업 사관학교 2기</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quarter-card rv" style="transition-delay:.26s">
+      <div class="q-head">
+        <p class="q-label">2026 · 4분기</p>
+        <h3 class="q-title">11월 — 마무리 학기</h3>
+      </div>
+      <div class="q-body">
+        <ul class="q-list">
+          <li>11월 7일 — 피올라 마음학교 4기</li>
+          <li>11월 21일 — 인생 2막 리셋 캠프 3기</li>
+          <li>12월 수료생 네트워킹 행사</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ⑤ 참가 신청 -->
+<div class="divider"><div class="div-line"></div><span class="div-gem">◆</span><div class="div-line"></div></div>
+<section class="wrap" id="apply">
+  <p class="eyebrow rv">SECTION 05 · APPLICATION</p>
+  <h2 class="sec-title rv">참가 신청</h2>
+  <p class="sec-body rv">원하시는 프로그램을 선택하고 아래 양식을 작성해 주십시오. 3영업일 내 담당자가 연락드립니다.</p>
+
+  <div class="app-grid">
+    <div class="app-info rvl">
+      <div class="app-info-card">
+        <div class="aic-label">문의 및 신청</div>
+        <div class="aic-text"><a href="mailto:haengyunyusu@gmail.com">haengyunyusu@gmail.com</a></div>
+      </div>
+      <div class="app-info-card">
+        <div class="aic-label">장학 안내</div>
+        <div class="aic-text">경제적 어려움이 있는 분을 위한<br/>장학 제도를 운영합니다. 별도 문의 주십시오.</div>
+      </div>
+      <div class="app-info-card">
+        <div class="aic-label">유의 사항</div>
+        <div class="aic-text">
+          · 프로그램별 정원이 한정됩니다<br/>
+          · 신청 후 담당자 검토를 거칩니다<br/>
+          · 일정 변동 시 사전 안내드립니다
+        </div>
+      </div>
+      <div class="app-info-card">
+        <div class="aic-label">오시는 길</div>
+        <div class="aic-text">충북 영동군 물한리<br/>서울에서 차량 2시간 30분<br/>셔틀버스 운영 (별도 안내)</div>
+      </div>
+    </div>
+
+    <div class="form-wrap rvr">
+      <h3 class="form-title">참가 신청서</h3>
+      <form id="apply-form" novalidate>
+      <div class="form-row">
+        <label class="form-label">성함</label>
+        <input id="f-name" class="form-input" type="text" placeholder="이름을 입력해주세요" required/>
+      </div>
+      <div class="form-row">
+        <label class="form-label">연락처</label>
+        <input id="f-tel" class="form-input" type="tel" placeholder="010-0000-0000" required/>
+      </div>
+      <div class="form-row">
+        <label class="form-label">이메일</label>
+        <input id="f-email" class="form-input" type="email" placeholder="email@example.com"/>
+      </div>
+      <div class="form-row">
+        <label class="form-label">신청 프로그램</label>
+        <select id="f-prog" class="form-input" required>
+          <option value="">참가하실 프로그램을 선택해주세요</option>
+          <option>피올라 마음학교</option>
+          <option>인생 2막 리셋 캠프</option>
+          <option>6차산업 창업 사관학교</option>
+          <option>복수 프로그램 (문의)</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">희망 일정</label>
+        <select id="f-date" class="form-input">
+          <option value="">희망 기수를 선택해주세요</option>
+          <option>2026년 1분기 (3월)</option>
+          <option>2026년 2분기 (6월)</option>
+          <option>2026년 3분기 (9월)</option>
+          <option>2026년 4분기 (11월)</option>
+          <option>미정 (담당자 안내 요청)</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">참가 동기</label>
+        <textarea id="f-msg" class="form-input" placeholder="참가 동기나 현재 상황을 간략히 적어주세요."></textarea>
+      </div>
+      <button type="submit" class="btn btn-p" style="width:100%;justify-content:center">신청서 제출하기</button>
+      <p id="apply-notice" style="display:none;margin-top:.9rem;font-size:.75rem;color:var(--gold);text-align:center">이메일 앱이 열립니다. 전송 후 3영업일 내 연락드립니다.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-brand">화광동진 · 和光同塵</div>
+  <p class="foot-copy">📱 010-7520-9445 &nbsp;|&nbsp; ✉️ haengyunyusu@gmail.com &nbsp;|&nbsp; <a href="https://pf.kakao.com/_xbWEXj" target="_blank" style="color:var(--gold)">💬 카카오 문의</a><br/>© 2026 · 인생 2막 웰니스 치유 관광 사관학교 · All rights reserved</p>
+</footer>
+
+<script>
+(function(){const cv=document.getElementById('bg-canvas'),ctx=cv.getContext('2d');let W,H;const pts=[];function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight}resize();window.addEventListener('resize',resize);class P{constructor(){this.init(true)}init(r){this.x=Math.random()*W;this.y=r?Math.random()*H:H+6;this.rad=Math.random()*1.1+0.2;this.a=Math.random()*.08+.01;this.vx=(Math.random()-.5)*.1;this.vy=-(Math.random()*.18+.04);this.lf=1;this.dc=Math.random()*.0007+.00015}tick(){this.x+=this.vx;this.y+=this.vy;this.lf-=this.dc;if(this.lf<=0||this.y<-8)this.init(false)}draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.rad,0,Math.PI*2);ctx.fillStyle=`rgba(201,168,76,${this.a*this.lf})`;ctx.fill()}}for(let i=0;i<80;i++)pts.push(new P());function ink(){ctx.save();ctx.strokeStyle='#c9a84c';ctx.lineCap='round';ctx.lineWidth=90;ctx.globalAlpha=.016;ctx.beginPath();ctx.moveTo(0,H*.12);ctx.bezierCurveTo(W*.28,H*.03,W*.62,H*.2,W,H*.08);ctx.stroke();ctx.lineWidth=60;ctx.globalAlpha=.012;ctx.beginPath();ctx.moveTo(0,H*.84);ctx.bezierCurveTo(W*.3,H*.96,W*.7,H*.76,W,H*.9);ctx.stroke();ctx.restore()}(function loop(){ctx.clearRect(0,0,W,H);ink();pts.forEach(p=>{p.tick();p.draw()});requestAnimationFrame(loop)})()})();
+(function(){const els=document.querySelectorAll('.rv,.rvl,.rvr');const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}})},{threshold:.09});els.forEach(el=>io.observe(el))})();
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}})});
+(function(){const nav=document.querySelector('nav');window.addEventListener('scroll',()=>{if(window.scrollY>60){nav.style.background='rgba(7,9,15,.97)';nav.style.backdropFilter='blur(12px)';nav.style.borderBottom='1px solid rgba(201,168,76,.12)'}else{nav.style.background='linear-gradient(to bottom,rgba(7,9,15,.97),transparent)';nav.style.backdropFilter='';nav.style.borderBottom=''}});})();
+
+/* ── 참가 신청 폼 → mailto 제출 ── */
+document.getElementById('apply-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var name  = document.getElementById('f-name').value.trim();
+  var tel   = document.getElementById('f-tel').value.trim();
+  var email = document.getElementById('f-email').value.trim();
+  var prog  = document.getElementById('f-prog').value;
+  var date  = document.getElementById('f-date').value;
+  var msg   = document.getElementById('f-msg').value.trim();
+  if (!name || !tel || !prog) {
+    alert('성함, 연락처, 신청 프로그램은 필수 입력 항목입니다.');
+    return;
+  }
+  var body = '【화광동진 프로그램 참가 신청】\n\n'
+    + '성함: ' + name + '\n'
+    + '연락처: ' + tel + '\n'
+    + '이메일: ' + (email || '미기재') + '\n'
+    + '신청 프로그램: ' + prog + '\n'
+    + '희망 일정: ' + (date || '미정') + '\n'
+    + '참가 동기:\n' + (msg || '없음');
+  window.location.href = 'mailto:haengyunyusu@gmail.com'
+    + '?subject=' + encodeURIComponent('[참가신청] ' + prog + ' — ' + name)
+    + '&body='    + encodeURIComponent(body);
+  document.getElementById('apply-notice').style.display = 'block';
+});
+</script>
+</body>
+</html>
