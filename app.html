@@ -941,8 +941,8 @@ body {
       <div class="album-art">
         <span class="album-art-gold">정규 1집</span>
       </div>
-      <div class="np-song-title" id="np-title">금강을 건너며</div>
-      <div class="np-song-sub" id="np-sub">행운유수 정규 1집 · 화광동진 주광현 작사</div>
+      <div class="np-song-title" id="np-title">그래도 나는 사랑하리라</div>
+      <div class="np-song-sub" id="np-sub">행운유수 · 화광동진 주광현 작사</div>
       <div class="np-progress-wrap">
         <div class="np-progress-bar">
           <div class="np-progress-fill" id="np-fill"></div>
@@ -1146,15 +1146,15 @@ const chapters = [
 ];
 
 const songs = [
-  { num: 1, title: '금강을 건너며', sub: '오프닝', free: true, duration: '—', file: 'music/01__금강을_건너며.mp3' },
-  { num: 2, title: '막내의 눈물', sub: '발라드', free: true, duration: '—', file: 'music/02__막내의_눈물.mp3' },
-  { num: 3, title: '흙과 땀과 꿈', sub: '포크', free: true, duration: '—', file: 'music/03__흙과_땀과_꿈.mp3' },
-  { num: 4, title: '일광', sub: '서정', free: false, duration: '—', file: 'music/04__일광.mp3' },
-  { num: 5, title: '고해', sub: '발라드', free: false, duration: '—', file: 'music/05__고해.mp3' },
-  { num: 6, title: '그래도', sub: '타이틀곡', free: false, duration: '—', file: 'music/06__그래도.mp3' },
-  { num: 7, title: '화광동진', sub: '和光同塵', free: false, duration: '—', file: 'music/07__화광동진.mp3' },
-  { num: 8, title: '임업사관학교', sub: '희망가', free: false, duration: '—', file: 'music/08__임업사관학교.mp3' },
-  { num: 9, title: '행운유수', sub: '클로징', free: false, duration: '—', file: 'music/09__행운유수__1_.mp3' },
+  { num: 1, title: '그래도 나는 사랑하리라', sub: '타이틀곡', free: true, duration: '3:45' },
+  { num: 2, title: '화광동진 (和光同塵)', sub: '인트로', free: true, duration: '2:58' },
+  { num: 3, title: '금강의 물처럼', sub: '발라드', free: true, duration: '4:12' },
+  { num: 4, title: '황금 들판', sub: '포크', free: false, duration: '3:30' },
+  { num: 5, title: '솥귀의 노래', sub: '어쿠스틱', free: false, duration: '3:55' },
+  { num: 6, title: '다시, 봄', sub: '발라드', free: false, duration: '4:05' },
+  { num: 7, title: '관저동 다락방', sub: '서정', free: false, duration: '3:22' },
+  { num: 8, title: '아버지에게', sub: '트로트', free: false, duration: '3:48' },
+  { num: 9, title: '그래도 (Anyway)', sub: '아웃트로', free: false, duration: '5:10' },
 ];
 
 const questions = [
@@ -1312,98 +1312,53 @@ function renderMusicList() {
   `).join('');
 }
 
-
-// ── 실제 음원 재생 ──
-let audioEl = null;
-
+// ── 음악 플레이어 ──
 function playSong(idx) {
   currentSong = idx;
-  const s = songs[idx];
-  
-  // 기존 오디오 정지
-  if (audioEl) { audioEl.pause(); audioEl = null; }
-  clearInterval(progressTimer);
-  
-  document.getElementById('np-title').textContent = s.title;
-  document.getElementById('np-sub').textContent = `행운유수 정규 1집 · ${s.sub}`;
-  document.getElementById('play-btn').textContent = '⏸';
   isPlaying = true;
+  progress = 0;
+  const s = songs[idx];
+  document.getElementById('np-title').textContent = s.title;
+  document.getElementById('np-sub').textContent = `행운유수 · ${s.sub}`;
+  document.getElementById('np-dur').textContent = s.duration;
+  document.getElementById('play-btn').textContent = '⏸';
   renderMusicList();
   listenedSongs.add(idx);
   updateStats();
-  
-  // WAV 파일 재생 시도
-  try {
-    audioEl = new Audio(s.file);
-    audioEl.play().catch(() => {
-      // 파일 없으면 가상 진행
-      startFakeProgress();
-    });
-    audioEl.addEventListener('timeupdate', () => {
-      if (!audioEl) return;
-      const pct = (audioEl.currentTime / (audioEl.duration || 240)) * 100;
-      const fill = document.getElementById('np-fill');
-      if (fill) fill.style.width = Math.min(pct, 100) + '%';
-      const cur = document.getElementById('np-cur');
-      if (cur) {
-        const t = Math.floor(audioEl.currentTime);
-        cur.textContent = Math.floor(t/60) + ':' + String(t%60).padStart(2,'0');
-      }
-    });
-    audioEl.addEventListener('loadedmetadata', () => {
-      if (!audioEl) return;
-      const d = Math.floor(audioEl.duration);
-      const dur = document.getElementById('np-dur');
-      if (dur) dur.textContent = Math.floor(d/60) + ':' + String(d%60).padStart(2,'0');
-    });
-    audioEl.addEventListener('ended', () => nextSong());
-    document.getElementById('np-dur').textContent = '—:——';
-    document.getElementById('np-cur').textContent = '0:00';
-    document.getElementById('np-fill').style.width = '0%';
-  } catch(e) {
-    startFakeProgress();
-  }
+  startProgress(s.duration);
 }
 
 function togglePlay() {
-  if (audioEl) {
-    if (isPlaying) { audioEl.pause(); isPlaying = false; document.getElementById('play-btn').textContent = '▶'; }
-    else { audioEl.play(); isPlaying = true; document.getElementById('play-btn').textContent = '⏸'; }
-  } else {
-    playSong(currentSong);
-  }
+  isPlaying = !isPlaying;
+  document.getElementById('play-btn').textContent = isPlaying ? '⏸' : '▶';
+  if (isPlaying) startProgress(songs[currentSong].duration);
+  else clearInterval(progressTimer);
 }
 
 function nextSong() {
-  const freeSongs = songs.filter(s => s.free);
-  const freeIdx = freeSongs.findIndex((_, i) => songs.indexOf(freeSongs[i]) === currentSong);
-  if (freeIdx < freeSongs.length - 1) {
-    playSong(songs.indexOf(freeSongs[freeIdx + 1]));
-  } else {
-    playSong(songs.indexOf(freeSongs[0]));
-  }
+  const next = (currentSong + 1) % songs.filter(s => s.free).length;
+  playSong(next);
 }
 
 function prevSong() {
-  const freeSongs = songs.filter(s => s.free);
-  const freeIdx = freeSongs.findIndex((_, i) => songs.indexOf(freeSongs[i]) === currentSong);
-  const prev = freeIdx > 0 ? freeIdx - 1 : freeSongs.length - 1;
-  playSong(songs.indexOf(freeSongs[prev]));
+  const free = songs.filter(s => s.free);
+  const prev = (currentSong - 1 + free.length) % free.length;
+  playSong(prev);
 }
 
-function startFakeProgress() {
-  progress = 0;
+function startProgress(dur) {
+  clearInterval(progressTimer);
+  const parts = dur.split(':');
+  const totalSec = parseInt(parts[0]) * 60 + parseInt(parts[1]);
   progressTimer = setInterval(() => {
     if (!isPlaying) return;
-    progress++;
+    progress = Math.min(progress + 1, totalSec);
+    const pct = (progress / totalSec * 100).toFixed(1);
     const fill = document.getElementById('np-fill');
-    if (fill) fill.style.width = Math.min((progress/240)*100, 100) + '%';
+    if (fill) fill.style.width = pct + '%';
     const cur = document.getElementById('np-cur');
-    if (cur) cur.textContent = Math.floor(progress/60)+':'+String(progress%60).padStart(2,'0');
-    if (progress >= 240) { clearInterval(progressTimer); nextSong(); }
-  }, 1000);
-}
-
+    if (cur) cur.textContent = `${Math.floor(progress/60)}:${String(progress%60).padStart(2,'0')}`;
+    if (progress >= totalSec) { clearInterval(progressTimer); nextSong(); }
   }, 1000);
 }
 
